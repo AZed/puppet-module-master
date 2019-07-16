@@ -1,13 +1,15 @@
-Commits from addresses @nasa.gov are works for hire for the
-U.S. Federal government and are in the public domain.
+The NASA GSFC Software Release Authority received all the concurrences
+required for the open source release of NASA case No. GSC-18229-1 and
+entitled “Puppet Module Master”. The release of these codes is subject
+to the NASA Open Source Agreement (NOSA), a copy of which can be found
+at:
 
-Commits from addresses @resonant.org are copyright of Lynne Valencic
-<lvalencic1@gmail.com> and are licensed to NASA for use, modification,
-and internal distribution until 2020 under the assumption that the
-combined work is to be released to the public under the ISC, NASA-1.3,
-or GPL-2 licenses, at which time such commits will be released to the
-public under the same terms.
+https://opensource.org/licenses/NASA-1.3
 
-Authorization for release into the public has been secured from NASA.
-This file will be updated.
+The copyright notices to be included in the software is provided in
+the NOSA, and it reads as follows:
 
+Copyright © 2017 United States Government as represented by the
+Administrator, National Aeronautics and Space Administration.  No
+Copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
