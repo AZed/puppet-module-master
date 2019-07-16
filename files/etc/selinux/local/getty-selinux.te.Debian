@@ -1,0 +1,17 @@
+
+module getty-selinux 1.2;
+
+require {
+	type var_run_t;
+	type getty_t;
+        type initrc_t;
+        type var_t;
+	class sock_file write;
+        class unix_stream_socket connectto;
+        class file { read };
+}
+
+#============= getty_t ==============
+allow getty_t var_run_t:sock_file write;
+allow getty_t initrc_t:unix_stream_socket connectto;
+allow getty_t var_t:file read;

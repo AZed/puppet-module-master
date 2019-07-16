@@ -1,0 +1,8 @@
+#
+# PAM configuration for postgresql access
+#
+# This is controlled from a Puppet template.  Do not modify directly.
+#
+
+@include common-auth
+@include common-account

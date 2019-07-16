@@ -1,0 +1,5 @@
+<% if @internal and @internal.respond_to?('each') -%>
+<%   @internal.each do |line| -%>
+<%= line %>
+<%   end -%>
+<% end -%>

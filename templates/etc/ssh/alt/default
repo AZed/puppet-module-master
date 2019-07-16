@@ -1,0 +1,9 @@
+# Default settings for openssh-server. This file is sourced by /bin/sh from
+# /etc/init.d/ssh.
+
+# Options to pass to sshd
+<% if @config['SSHD_OPTS'] -%>
+SSHD_OPTS="<%= @config['SSHD_OPTS'] %> -f /etc/ssh/alt/<%= @port %>/sshd_config"
+<% else -%>
+SSHD_OPTS="-f /etc/ssh/alt/<%= @port %>/sshd_config"
+<% end -%>

@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+# Simple script to restore iptables rules
+
+/sbin/iptables-restore < /etc/iptables.conf
+

@@ -1,0 +1,3 @@
+setsebool allow_execmod 1
+setsebool puppet_manage_all_files on
+setsebool allow_execstack 1

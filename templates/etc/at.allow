@@ -1,0 +1,6 @@
+root
+<% if @admins and @admins.respond_to?('each') -%>
+<%   @admins.each do |admin| -%>
+<%= admin %>
+<%   end -%>
+<% end -%>

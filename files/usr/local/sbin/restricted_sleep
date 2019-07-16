@@ -1,0 +1,50 @@
+#!/bin/sh
+
+echo Authentication successful, but shell access here is restricted.
+echo Please see the documentation for how to use this service.
+echo
+echo If you do not know where that is, but are authorized to use this
+echo service, please contact support.
+echo
+echo This connection will terminate after 7 days if not restarted.
+echo
+echo "(Press Control-C if you wish to terminate authentication early.)"
+echo
+
+# Day 1
+sleep 86400
+
+# Day 2
+echo "This connection will terminate in 6 days."
+echo
+sleep 86400
+
+# Day 3
+echo "This connection will terminate in 5 days."
+echo
+sleep 86400
+
+# Day 4
+echo "This connection will terminate in 4 days."
+echo "(If you expect automated processes to use a tunnel over a long weekend,"
+echo "now is a good time to restart.)"
+echo
+sleep 86400
+
+# Day 5
+echo "This connection will terminate in 3 days."
+echo "(If you expect automated processes to use a tunnel over a weekend,"
+echo "now is a good time to restart.)"
+echo
+sleep 86400
+
+# Day 6
+echo "This connection will terminate in 2 days."
+echo
+sleep 86400
+
+# Day 7
+echo "This connection will terminate in 24 hours."
+echo "To avoid unexpected disconnection of automated processes,"
+echo "you should probably restart this connection now."
+sleep 86400

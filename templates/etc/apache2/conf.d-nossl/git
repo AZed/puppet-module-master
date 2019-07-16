@@ -1,0 +1,23 @@
+SetEnv GIT_PROJECT_ROOT /git
+ScriptAliasMatch \
+  "(?x)^/git/(.*/(HEAD | \
+  info/refs | \
+  objects/(info/[^/]+ | \
+  [0-9a-f]{2}/[0-9a-f]{38} | \
+  pack/pack-[0-9a-f]{40}\.(pack|idx)) | \
+  git-(upload|receive)-pack))$" \
+  /usr/lib/git-core/git-http-backend/$1
+
+Alias /git /usr/share/gitweb
+Alias /gitweb /usr/share/gitweb
+
+<Directory /usr/lib/git-core>
+  Options +ExecCGI
+  Allow from all
+</Directory>
+
+<Directory /usr/share/gitweb>
+  Options +FollowSymLinks +ExecCGI
+  AddHandler cgi-script .cgi
+  Allow from all
+</Directory>

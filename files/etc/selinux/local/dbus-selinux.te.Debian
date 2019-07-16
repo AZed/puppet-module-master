@@ -1,0 +1,26 @@
+
+module dbus-selinux 1.4;
+
+require {
+	type sysctl_crypto_t;
+	type system_dbusd_t;
+        type var_run_t;
+        type var_t;
+        type initrc_t;
+        type random_device_t;
+	class dir search;
+        class sock_file write;
+        class unix_stream_socket connectto;
+        class file { read open getattr };
+        class chr_file { read };
+        class capability ipc_lock;
+}
+
+#============= system_dbusd_t ==============
+allow system_dbusd_t sysctl_crypto_t:dir search;
+allow system_dbusd_t var_run_t:sock_file write;
+allow system_dbusd_t initrc_t:unix_stream_socket connectto;
+allow system_dbusd_t random_device_t:chr_file read;
+allow system_dbusd_t sysctl_crypto_t:file { read open getattr};
+allow system_dbusd_t var_t:file read;
+allow system_dbusd_t self:capability ipc_lock;

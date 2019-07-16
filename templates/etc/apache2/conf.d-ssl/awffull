@@ -1,0 +1,20 @@
+Alias <%= @aliaspath  %>/<%= @site %> /var/cache/awffull/<%= @site %>
+
+<Directory /var/cache/awffull/<%= @site %>>
+  AllowOverride None
+  Options FollowSymLinks
+<% if scope['master::service::apache::apacheversion'].to_f < 2.4 -%>
+  Order Allow,Deny
+  Allow from All
+<% else -%>
+  Require all granted
+<% end -%>
+
+  AuthType Basic
+  AuthName Restricted
+  AuthBasicAuthoritative on
+  AuthBasicProvider ldap
+  AuthLDAPURL <%= @authldapurl %>
+  require ldap-user <% @webmasters.each do |webmaster| -%>
+<%= webmaster %> <% end %>
+</Directory>

@@ -1,0 +1,3 @@
+#!/bin/sh
+hg addremove
+hg commit -m "Automatic commit of all changed files"

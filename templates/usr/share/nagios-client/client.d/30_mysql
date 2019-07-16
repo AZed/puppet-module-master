@@ -1,0 +1,3 @@
+# Ensure the mysqld process is running
+CheckLocalProcs "mysqld" 1:1
+

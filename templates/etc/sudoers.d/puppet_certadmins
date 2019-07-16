@@ -1,0 +1,10 @@
+# Users who can issue puppet cert commands to manage newly created
+# systems
+
+User_Alias CERT_ADMINS=<%= @puppetmaster_certadmins.join(',') %>
+
+Cmnd_Alias CERT_CMDS=/usr/bin/puppet cert *, \
+                     /usr/bin/puppet ca *,   \
+                     /bin/systemctl reload <%= scope['master::service::apache::apacheservice'] %>
+
+CERT_ADMINS ALL=CERT_CMDS

@@ -1,0 +1,36 @@
+
+module semanage-selinux 1.7;
+
+require {
+	type var_run_t;
+        type var_t;
+	type semanage_t;
+        type sysctl_crypto_t;
+        type initrc_t;
+        type user_tmp_t;
+        type random_device_t;
+        type selinux_config_t;
+	type puppet_var_lib_t;
+        class unix_stream_socket connectto;
+        class dir { search rename rmdir };
+	class sock_file write;
+        class file { read open write getattr};
+        class fd use;
+        class process signal;
+        class chr_file read;
+        class capability ipc_lock;
+}
+
+#============= semanage_t ==============
+allow semanage_t var_run_t:sock_file write;
+allow semanage_t sysctl_crypto_t:file { read open getattr};
+allow semanage_t var_t:file read;
+allow semanage_t initrc_t:fd use;
+allow semanage_t initrc_t:unix_stream_socket connectto;
+allow semanage_t sysctl_crypto_t:dir search;
+allow semanage_t user_tmp_t:file write;
+allow semanage_t random_device_t:chr_file read;
+allow semanage_t self:process signal;
+allow semanage_t self:capability ipc_lock;
+allow semanage_t selinux_config_t:dir { rename rmdir };
+allow semanage_t puppet_var_lib_t:dir search;

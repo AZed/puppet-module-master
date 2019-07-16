@@ -1,0 +1,5 @@
+# Make sure gluster processes are running
+
+CheckLocalProcs "glusterd" 1:1
+CheckLocalProcs "glusterfs" 1:2
+CheckLocalProcs "glusterfsd" 1:1

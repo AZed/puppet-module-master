@@ -1,0 +1,20 @@
+
+module cron-selinux 1.2;
+
+require {
+	type var_run_t;
+	type sysctl_crypto_t;
+	type crond_t;
+        type initrc_t;
+        type var_t;
+        class file read;
+	class sock_file write;
+	class dir search;
+        class unix_stream_socket connectto;
+}
+
+#============= crond_t ==============
+allow crond_t sysctl_crypto_t:dir search;
+allow crond_t var_run_t:sock_file write;
+allow crond_t initrc_t:unix_stream_socket connectto;
+allow crond_t var_t:file read;

@@ -1,0 +1,2 @@
+# Check gluster peers
+CheckGlusterPeers -p <%= @nagios_gluster_peers %>

@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# This script is a simple helper script for puppet to be able 
+# to initialize the RSAWebAgent.INI file.
+
+initFile="/var/lib/rsawebagent/RSAWebAgent.INI"
+
+if [ ! -f ${initFile} ]
+then
+  echo "Generating new RSAWebAgent.INI"
+  ( echo ""
+    echo ""
+    echo ""
+    echo ""
+  ) | /var/lib/rsawebagent/config 2>/dev/null 1>/dev/null
+  echo "Done. You will need to restart the RSA service"
+fi
+chmod 400 ${initFile}
+chown www-data ${initFile}

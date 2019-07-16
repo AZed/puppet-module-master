@@ -1,0 +1,2 @@
+glpi	glpi/mysql/admin-user	string	debian-sys-maint
+glpi	glpi/dbconfig-install	boolean	false

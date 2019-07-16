@@ -1,0 +1,2 @@
+ocsinventory-agent	ocsinventory-agent/method	select	http
+ocsinventory-agent	ocsinventory-agent/server	string	<%= @server %>

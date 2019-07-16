@@ -1,0 +1,2 @@
+# Dump the LDAP databases every 5 minutes
+*/10 * * * * root /usr/local/sbin/backup-ldap-database.sh

@@ -1,0 +1,66 @@
+#!/bin/bash
+
+SOURCESLIST="/etc/apt/sources.list /etc/apt/sources.list.d/*"
+VARDIR="/var/lib/apt"
+LISTSDIR="$VARDIR/lists"
+CACHEDIR="/var/cache/apt"
+ARCHIVESDIR="$CACHEDIR/archives"
+LOGDIR="/var/log/apt"
+IGNORE_ARCHIVES="yes"
+IGNORE_FRQCHG="yes"
+APT_VERS=""
+
+if [ -x "$UPAC_confd/31_local_apt_settings" ]; then
+  # pull in configuration
+  . "$UPAC_confd/31_local_apt_settings"
+fi
+
+echo "/etc/apt$ VarDir"
+
+cat $SOURCESLIST | while read deb uri dist comp; do
+  PROTOCOL="$(echo $uri | sed 's|\([^:]\+\).*|\1|')"
+  if [ "$PROTOCOL" = "http" ] || [ "$PROTOCOL" = "ftp" ]; then
+    HOST="$(echo $uri | sed 's|.*//\([^/[:space:]]\+\).*|\1|')"
+    HOSTPATH="$(echo $uri | sed 's|.*//[^/[:space:]]\+/\?||;s|/$||;s|/|_|g;s|^\(.\+\)$|_\1|')"
+    dist="${dist//\//_}"
+    if [ -n "$DEBUG" ]; then
+      echo "uri $uri"
+      echo "HOST $HOST"
+      echo "HOSTPATH $HOSTPATH"
+    fi
+    if [ "$deb" = "deb" ]; then
+      for c in $comp; do
+        echo "$LISTSDIR/${HOST}${HOSTPATH}_dists_${dist}_${c}_binary-@@{ARCH}_Packages(\.IndexDiff)?$ VarFile"
+        echo "$LISTSDIR/${HOST}${HOSTPATH}_dists_${dist}_Release(\.gpg)?$ VarFile"
+      done
+    elif [ "$deb" = "deb-src" ]; then
+      for c in $comp; do
+        echo "$LISTSDIR/${HOST}${HOSTPATH}_dists_${dist}_${c}_source_(Sources|Release)$ VarFile"
+	echo "$LISTSDIR/${HOST}${HOSTPATH}_dists_${dist}_${c}_source_Sources(\.IndexDiff)?$ VarFile"
+	echo "$LISTSDIR/${HOST}${HOSTPATH}_dists_${dist}_Release(\.gpg)?$ VarFile"
+      done
+    fi
+  else
+    : # other protocols are not supported. If you feel like they should
+    : # please give a good reason and probably a patch.
+  fi
+  echo -e "\n\n"
+done
+
+echo "${LISTSDIR}(/partial)?$ VarDir"
+echo "${LISTSDIR}/lock$ VarFile"
+echo "${VARDIR}/extended_states$ VarFile"
+echo "${VARDIR}$ VarDir"
+echo "${LOGDIR}/term\.log$ Log"
+echo "${LOGDIR}/term\.log\.[0-9]\.gz LowDELog"
+
+if [ "$IGNORE_ARCHIVES" = "yes" ]; then
+  echo "!$ARCHIVESDIR/[-a-zA-Z0-9%\.~_+]+_(@@{ARCH}|all)\.deb$"
+fi
+
+if [ "$IGNORE_FRQCHG" = "yes" ]; then
+  echo "$ARCHIVESDIR(/partial|/lock)?$ VarDir"
+  echo "$CACHEDIR/(src)?pkgcache\.bin$ VarFile"
+  echo "$CACHEDIR$ VarDir"
+  echo "!${LISTSDIR}/partial/.*"
+fi

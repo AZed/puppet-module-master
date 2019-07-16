@@ -1,0 +1,2 @@
+CheckLocalProcs "sendpage:" 3:6
+CheckLocalProcs "sendmail" 0:5

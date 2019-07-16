@@ -1,0 +1,21 @@
+#
+# /etc/pam.d/common-session - session-related modules common to all services
+#
+# This file is included from other service-specific PAM config files,
+# and should contain a list of modules that define tasks to be performed
+# at the start and end of sessions of *any* kind (both interactive and
+# non-interactive).
+#
+
+<% if @pam_mkhomedir -%>
+session required   pam_mkhomedir.so skel=/etc/skel/ umask=0077
+<% end -%>
+<% if @authmech and @authmech == 'ldap' -%>
+session optional   pam_ldap.so
+<% elsif @authmech and @authmech == 'sss' -%>
+session optional   pam_sss.so
+<% end -%>
+session required   pam_unix.so
+<% if @operatingsystemmajrelease.to_i >= 8 -%>
+session optional   pam_systemd.so
+<% end -%>

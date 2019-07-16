@@ -1,0 +1,6 @@
+/var/lib/apt/lists/backports.debian.org_debian-backports_dists_squeeze-backports_contrib_i18n_Translation-en VarFile
+/var/lib/apt/lists/backports.debian.org_debian-backports_dists_squeeze-backports_main_i18n_Translation-en VarFile
+/var/lib/apt/lists/backports.debian.org_debian-backports_dists_squeeze-backports_non-free_i18n_Translation-en VarFile
+/var/lib/apt/lists/.*_mirror_debian(-security)?_dists_wheezy(_updates)?_contrib_i18n_Translation-en VarFile
+/var/lib/apt/lists/.*_mirror_debian(-security)?_dists_wheezy(_updates)?_main_i18n_Translation-en VarFile
+/var/lib/apt/lists/.*_mirror_debian(-security)?_dists_wheezy(_updates)?_non-free_i18n_Translation-en VarFile

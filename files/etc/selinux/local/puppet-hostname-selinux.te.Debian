@@ -1,0 +1,11 @@
+
+module puppet-hostname-selinux 1.0;
+
+require {
+	type initrc_tmp_t;
+	type hostname_t;
+	class file { read write };
+}
+
+#============= hostname_t ==============
+allow hostname_t initrc_tmp_t:file { read write };

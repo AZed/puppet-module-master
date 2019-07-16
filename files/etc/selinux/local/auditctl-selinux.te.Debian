@@ -1,0 +1,30 @@
+
+module auditctl-selinux 1.8;
+
+require {
+	type var_run_t;
+	type locale_t;
+	type net_conf_t;
+	type auditctl_t;
+        type ldap_port_t;
+        type sysctl_crypto_t;
+	class sock_file write;
+	class netlink_route_socket { read bind create getattr write nlmsg_read };
+        class tcp_socket { name_connect read getattr create connect write  setopt shutdown };
+	class udp_socket { read getattr create connect write };
+	class file { read open };
+        class dir { search };
+}
+
+#============= auditctl_t ==============
+allow auditctl_t locale_t:file open;
+allow auditctl_t locale_t:file read;
+allow auditctl_t net_conf_t:file open;
+allow auditctl_t net_conf_t:file read;
+allow auditctl_t self:netlink_route_socket { read bind create getattr write nlmsg_read };
+allow auditctl_t self:udp_socket { connect create write read getattr };
+allow auditctl_t self:tcp_socket {  name_connect setopt shutdown connect create write read getattr };
+allow auditctl_t var_run_t:sock_file write;
+allow auditctl_t ldap_port_t:tcp_socket name_connect;
+allow auditctl_t sysctl_crypto_t:dir search;
+allow auditctl_t sysctl_crypto_t:file read;

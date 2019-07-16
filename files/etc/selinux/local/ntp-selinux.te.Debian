@@ -1,0 +1,24 @@
+
+module ntp-selinux 1.1;
+
+require {
+	type ntpd_t;
+	type sysctl_crypto_t;
+	type var_run_t;
+        type var_t;
+        type initrc_t;
+        type random_device_t;
+	class sock_file write;
+        class unix_stream_socket connectto;
+	class dir search;
+        class file { read open };
+        class chr_file { read };
+}
+
+#============= ntpd_t ==============
+allow ntpd_t sysctl_crypto_t:dir search;
+allow ntpd_t var_run_t:sock_file write;
+allow ntpd_t initrc_t:unix_stream_socket connectto;
+allow ntpd_t random_device_t:chr_file read;
+allow ntpd_t sysctl_crypto_t:file { read open };
+allow ntpd_t var_t:file read;

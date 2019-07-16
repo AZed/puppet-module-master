@@ -1,0 +1,2 @@
+# FusionInventory unofficial Debian repository
+deb http://debian.fusioninventory.org/debian/ <%= @debian_release %> main

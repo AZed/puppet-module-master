@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# /etc/cron.daily/debsums
+#
+# Initialize missing debsums entries if needed, then report any
+# changed values
+
+if [ X"`/usr/bin/debsums -l`" != X ] ; then
+    /usr/sbin/debsums_init
+fi
+
+/usr/bin/debsums -c

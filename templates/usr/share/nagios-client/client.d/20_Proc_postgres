@@ -1,0 +1,5 @@
+CheckLocalProcs postgres 1:1 "postgresql.conf"
+CheckLocalProcs postgres 1:1 "logger process"
+CheckLocalProcs postgres 1:1 "wal writer process"
+CheckLocalProcs postgres 1:1 "autovacuum launcher process"
+CheckLocalProcs postgres 1:1 "stats collector process"

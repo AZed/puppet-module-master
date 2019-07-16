@@ -1,0 +1,6 @@
+<% if @tty_templates -%>
+<%   @tty_templates.each do |template| -%>
+<%= scope.function_template(["#{template}"]) -%>
+
+<%   end -%>
+<% end -%>

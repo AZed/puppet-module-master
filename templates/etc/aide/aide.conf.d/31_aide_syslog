@@ -1,0 +1,16 @@
+@@define LOGFILES (debug|duplicity|messages|syslog|(alternatives|auth|daemon|kern|lpr|sudo|user)\.log|mail\.(log|err|warn|info))
+
+/var/log$ VarDir
+/var/log/@@{LOGFILES}$ FreqRotLog
+/var/log/@@{LOGFILES}\.0$ LowLog
+/var/log/@@{LOGFILES}\.1$ LowLog
+
+# The SerLog handlers don't deal with these files being deleted on a
+# time-based rather than number-based schedule
+!/var/log/@@{LOGFILES}\.[2-7]\.gz$
+
+/var/run/(klogd|rsyslogd|syslogd)\.pid$ VarFile
+/lib/init/rw/sendsigs\.omit\.d/rsyslog$ VarInode
+
+# Ignore local custom logs
+!/var/local/log/.*

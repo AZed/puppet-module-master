@@ -1,0 +1,5 @@
+<% if @install_recommends -%>
+APT::Install-Recommends "true";
+<% else -%>
+APT::Install-Recommends "false";
+<% end -%>

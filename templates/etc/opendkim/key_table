@@ -1,0 +1,12 @@
+<% if @key_table_lines and @key_table_lines.respond_to?('each') -%>
+<%   @key_table_lines.each do |line| -%>
+<%= line %>
+<%   end -%>
+
+<% end -%>
+<% if @key_table_templates -%>
+<%   @key_table_templates.each do |template| -%>
+<%= scope.function_template(["#{template}"]) -%>
+
+<%   end -%>
+<% end -%>

@@ -1,0 +1,9 @@
+# Logrotation for slapo-auditlog logs
+/var/log/slapd/audit.log {
+        daily
+        compress
+        delaycompress
+        rotate 60
+        missingok
+        nocreate
+}

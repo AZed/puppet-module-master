@@ -1,0 +1,186 @@
+#
+# This device is managed by Puppet.  Changes will be overwritten.
+#
+
+<% # Default Variable Setup
+   if @config['ipaddr']
+       address = @config['ipaddr']
+       addressblock = address[/(\d{1,3}\.\d{1,3}\.\d{1,3})\.\d{1,3}/,1]
+       address1 = address[/(\d{1,3})\.\d{1,3}\.\d{1,3}\.\d{1,3}/,1].to_i
+       address2 = address[/\d{1,3}\.(\d{1,3})\.\d{1,3}\.\d{1,3}/,1].to_i
+       address3 = address[/\d{1,3}\.\d{1,3}\.(\d{1,3})\.\d{1,3}/,1].to_i
+       address4 = address[/\d{1,3}\.\d{1,3}\.\d{1,3}\.(\d{1,3})/,1].to_i
+   elsif @config['address']
+       address = @config['address']
+       addressblock = address[/(\d{1,3}\.\d{1,3}\.\d{1,3})\.\d{1,3}/,1]
+       address1 = address[/(\d{1,3})\.\d{1,3}\.\d{1,3}\.\d{1,3}/,1].to_i
+       address2 = address[/\d{1,3}\.(\d{1,3})\.\d{1,3}\.\d{1,3}/,1].to_i
+       address3 = address[/\d{1,3}\.\d{1,3}\.(\d{1,3})\.\d{1,3}/,1].to_i
+       address4 = address[/\d{1,3}\.\d{1,3}\.\d{1,3}\.(\d{1,3})/,1].to_i
+   end
+-%>
+<% if @config['comments'] -%>
+<%   @config['comments'].each do |line| -%>
+# <%= line %>
+<%   end -%>
+<% end -%>
+<% if @config['name'] -%>
+NAME="<%= @config['name'] %>"
+<% end -%>
+<% if @config['startmode'].nil? -%>
+STARTMODE=auto
+<% elsif @config['startmode'] -%>
+STARTMODE=<%= @config['startmode'] %>
+<% else -%>
+STARTMODE=off
+<% end -%>
+<% if @config['ifplugd_priority'] -%>
+IFPLUGD_PRIORITY=<%= @config['ifplugd_priority'] %>
+<% end -%>
+<% if @config['bootproto'].nil? -%>
+<%   if @config['ipaddr'] -%>
+BOOTPROTO=static
+<%   else -%>
+BOOTPROTO=dhcp
+<%   end -%>
+<% elsif @config['bootproto'] -%>
+BOOTPROTO=<%= @config['bootproto'] %>
+<% else -%>
+BOOTPROTO=none
+<% end -%>
+<% if @config['etherdevice'] -%>
+ETHERDEVICE=<%= @config['etherdevice'] %>
+<% end -%>
+<% if address -%>
+<%   if @config['label'] -%>
+LABEL=<%= @config['label'] %>
+<%   end -%>
+IPADDR=<%= address %>
+<%   if @config['ipaddr_extra'] and @config['ipaddr_extra'].respond_to?('each_with_index') -%>
+<%     @config['ipaddr_extra'].each_with_index do |addr, index| -%>
+IPADDR_<%= index %>=<%= addr %>
+<%     end -%>
+<%   end -%>
+<%   if @config['netmask'] -%>
+NETMASK=<%= @config['netmask'] %>
+<%   end -%>
+<%   if @config['netmask_extra'] and @config['netmask_extra'].respond_to?('each_with_index') -%>
+<%     @config['netmask_extra'].each_with_index do |mask, index| -%>
+NETMASK_<%= index %>=<%= mask %>
+<%     end -%>
+<%   end -%>
+<%   if @config['prefixlen'] -%>
+PREFIXLEN=<%= @config['prefixlen'] %>
+<%   end -%>
+<%   if @config['prefixlen_extra'] and @config['prefixlen_extra'].respond_to?('each_with_index') -%>
+<%     @config['prefixlen_extra'].each_with_index do |len, index| -%>
+PREFIXLEN_<%= index %>=<%= len %>
+<%     end -%>
+<%   end -%>
+<%   if @config['broadcast'] -%>
+BROADCAST=<%= @config['broadcast'] %>
+<%   end -%>
+<%   if @config['remote_ipaddr'] -%>
+REMOTE_IPADDR=<%= @config['remote_ipaddr'] %>
+<%   end -%>
+<%   if @config['scope'] -%>
+SCOPE=<%= @config['scope'] %>
+<%   end -%>
+<%   if @config['ip_options'] -%>
+IP_OPTIONS=<%= @config['ip_options'] %>
+<%   end -%>
+<% end -%>
+<% if @config['interfacetype'] -%>
+INTERFACETYPE=<%= @config['interfacetype'] %>
+<% end -%>
+<% if @config['lladr'] -%>
+LLADR=<%= @config['lladr'] %>
+<% end -%>
+<% if @config['mtu'] -%>
+MTU=<%= @config['mtu'] %>
+<% end -%>
+<% if @config['link_options'] -%>
+LINK_OPTIONS=<%= @config['link_options'] %>
+<% end -%>
+<% if @config['link_ready_wait'] -%>
+LINK_READY_WAIT=<%= @config['link_ready_wait'] %>
+<% end -%>
+<% if @config['ipv6_dad_wait'] -%>
+IPV6_DAD_WAIT=<%= @config['ipv6_dad_wait'] %>
+<% end -%>
+<% if @config['ethtool_options'] -%>
+ETHTOOL_OPTIONS=<%= @config['ethtool_options'] %>
+<% end -%>
+<% if @config['run_poll_tcpip'] -%>
+RUN_POLL_TCPIP=<%= @config['run_poll_tcpip'] %>
+<% end -%>
+<% if @config['usercontrol'] -%>
+USERCONTROL=<%= @config['usercontrol'] %>
+<% elsif @config['userctl'] -%>
+USERCONTROL=<%= @config['userctl'] %>
+<% end -%>
+<% if @config['vlan_id'] -%>
+VLAN_ID=<%= @config['vlan_id'] %>
+<% end -%>
+<% if @config['dhclient_primary_device'] -%>
+DHCLIENT_PRIMARY_DEVICE=<%= @config['dhclient_primary_device'] %>
+<% end -%>
+<% if @config['bonding_master'] -%>
+BONDING_MASTER=<%= @config['bonding_master'] %>
+<% end -%>
+<% if @config['bonding_master_up_enslave'] -%>
+BONDING_MASTER_UP_ENSLAVE=<%= @config['bonding_master_up_enslave'] %>
+<% end -%>
+<% if @config['bonding_module_opts'] -%>
+BONDING_MODULE_OPTS=<%= @config['bonding_module_opts'] %>
+<% end -%>
+<% # Bonding slaves can be specified either via the bonding_slave_#
+   # variables, or via the bonding_slaves array that will
+   # automatically expand.  Do not try to do both.
+   if @config['bonding_slave_0'] -%>
+BONDING_SLAVE_0=<%= @config['bonding_slave_0'] %>
+<% end -%>
+<% if @config['bonding_slave_1'] -%>
+BONDING_SLAVE_1=<%= @config['bonding_slave_1'] %>
+<% end -%>
+<% if @config['bonding_slave_2'] -%>
+BONDING_SLAVE_2=<%= @config['bonding_slave_2'] %>
+<% end -%>
+<% if @config['bonding_slave_3'] -%>
+BONDING_SLAVE_3=<%= @config['bonding_slave_3'] %>
+<% end -%>
+<% if @config['bonding_slaves'].respond_to?('each_with_index') -%>
+<%   @config['bonding_slaves'].each_with_index do |slave, index| -%>
+BONDING_SLAVE_<%= index %>=<%= slave %>
+<%   end -%>
+<% end -%>
+<% if @config['bridge'] -%>
+BRIDGE=<%= @config['bridge'] %>
+<% end -%>
+<% if @config['bridge_ports'] -%>
+BRIDGE_PORTS=<%= @config['bridge_ports'] %>
+<% end -%>
+<% if @config['bridge_ageingtime'] -%>
+BRIDGE_AGEINGTIME=<%= @config['bridge_ageingtime'] %>
+<% end -%>
+<% if @config['bridge_forwarddelay'] -%>
+BRIDGE_FORWARDDELAY=<%= @config['bridge_forwarddelay'] %>
+<% end -%>
+<% if @config['bridge_hellotime'] -%>
+BRIDGE_HELLOTIME=<%= @config['bridge_hellotime'] %>
+<% end -%>
+<% if @config['bridge_maxage'] -%>
+BRIDGE_MAXAGE=<%= @config['bridge_maxage'] %>
+<% end -%>
+<% if @config['bridge_pathcosts'] -%>
+BRIDGE_PATHCOSTS=<%= @config['bridge_pathcosts'] %>
+<% end -%>
+<% if @config['bridge_portpriorities'] -%>
+BRIDGE_PORTPRIORITIES=<%= @config['bridge_portpriorities'] %>
+<% end -%>
+<% if @config['bridge_priority'] -%>
+BRIDGE_PRIORITY=<%= @config['bridge_priority'] %>
+<% end -%>
+<% if @config['bridge_stp'] -%>
+BRIDGE_STP=<%= @config['bridge_stp'] %>
+<% end -%>

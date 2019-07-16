@@ -1,0 +1,11 @@
+root
+<% if @admins and @admins.respond_to?('each') -%>
+<%   @admins.each do |admin| -%>
+<%= admin %>
+<%   end -%>
+<% end -%>
+<% if @cron_allow_users and @cron_allow_users.respond_to?('each') -%>
+<%   @cron_allow_users.each do |cronuser| -%>
+<%= cronuser %>
+<%   end -%>
+<% end -%>

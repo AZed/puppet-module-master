@@ -1,0 +1,255 @@
+#
+# This device is managed by Puppet.  Changes will be overwritten.
+#
+
+<% # Default Variable Setup
+   if @config['device']
+       device = @config['device']
+   else
+       device = @title
+   end
+   if @config['method'].nil?
+       method = 'static'
+   else
+       method = @config['method']
+   end
+   if @config['ipproto'].nil?
+       ipproto = 'inet'
+   else
+       ipproto = @config['ipproto']
+   end
+
+   if @config['address']
+       address = @config['address']
+       if ipproto == 'inet6'
+           # This currently only supports IPv6 over IPv4 addresses
+           addressblock = address[/(\h{1,4}:\h{1,4}:\h{1,4}:\h{1,4}::\d{1,3}\.\d{1,3}\.\d{1,3})\.\d{1,3}/,1]
+       else
+           addressblock = address[/(\d{1,3}\.\d{1,3}\.\d{1,3})\.\d{1,3}/,1]
+           address1 = address[/(\d{1,3})\.\d{1,3}\.\d{1,3}\.\d{1,3}/,1].to_i
+           address2 = address[/\d{1,3}\.(\d{1,3})\.\d{1,3}\.\d{1,3}/,1].to_i
+           address3 = address[/\d{1,3}\.\d{1,3}\.(\d{1,3})\.\d{1,3}/,1].to_i
+           address4 = address[/\d{1,3}\.\d{1,3}\.\d{1,3}\.(\d{1,3})/,1].to_i
+       end
+   elsif @config['ipaddr']
+       address = @config['ipaddr']
+       if ipproto == 'inet6'
+           # This currently only supports IPv6 over IPv4 addresses
+           addressblock = address[/(\h{1,4}:\h{1,4}:\h{1,4}:\h{1,4}::\d{1,3}\.\d{1,3}\.\d{1,3})\.\d{1,3}/,1]
+       else
+           addressblock = address[/(\d{1,3}\.\d{1,3}\.\d{1,3})\.\d{1,3}/,1]
+           address1 = address[/(\d{1,3})\.\d{1,3}\.\d{1,3}\.\d{1,3}/,1].to_i
+           address2 = address[/\d{1,3}\.(\d{1,3})\.\d{1,3}\.\d{1,3}/,1].to_i
+           address3 = address[/\d{1,3}\.\d{1,3}\.(\d{1,3})\.\d{1,3}/,1].to_i
+           address4 = address[/\d{1,3}\.\d{1,3}\.\d{1,3}\.(\d{1,3})/,1].to_i
+       end
+   end
+
+   if @config['netmask'].nil?
+       if ipproto == 'inet6'
+           netmask = '120'
+       else
+           netmask = '255.255.255.0'
+       end
+   else
+       netmask = @config['netmask']
+   end
+   netmask1 = netmask[/(\d{1,3})\.\d{1,3}\.\d{1,3}\.\d{1,3}/,1].to_i
+   netmask2 = netmask[/\d{1,3}\.(\d{1,3})\.\d{1,3}\.\d{1,3}/,1].to_i
+   netmask3 = netmask[/\d{1,3}\.\d{1,3}\.(\d{1,3})\.\d{1,3}/,1].to_i
+   netmask4 = netmask[/\d{1,3}\.\d{1,3}\.\d{1,3}\.(\d{1,3})/,1].to_i
+   if @config['gateway'].nil?
+       if ipproto == 'inet6' and addressblock
+           gateway = addressblock + ".1"
+       elsif ipproto == 'inet6'
+           gateway = false
+       elsif address1 and address2 and address3 and address4 and
+         netmask1 and netmask2 and netmask3 and netmask4
+           gateway1 = address1 & netmask1
+           gateway2 = address2 & netmask2
+           gateway3 = address3 & netmask3
+           gateway4 = (address4 & netmask4) + 1
+           gateway = gateway1.to_s + "." + gateway2.to_s + "." +
+                     gateway3.to_s + "." + gateway4.to_s
+       else
+           gateway = false
+       end
+   else
+       gateway = @config['gateway']
+   end
+
+   # The broadcast parameter will be automatically calculated (via a
+   # default value of '+') in Debian 7 (Wheezy) or later, but a full
+   # dotted quad is still required in Debian 6 (Squeeze)
+   if @config['broadcast'].nil?
+       if ipproto == 'inet6'
+           broadcast = false
+       elsif address1 and address2 and address3 and address4 and
+         netmask1 and netmask2 and netmask3 and netmask4
+           broadcast1 = address1 | ~netmask1 & 0xff
+           broadcast2 = address2 | ~netmask2 & 0xff
+           broadcast3 = address3 | ~netmask3 & 0xff
+           broadcast4 = address4 | ~netmask4 & 0xff
+           broadcast = broadcast1.to_s + "." + broadcast2.to_s + "." +
+                       broadcast3.to_s + "." + broadcast4.to_s
+       else
+           broadcast = false
+       end
+   else
+       broadcast = @config['broadcast']
+   end -%>
+<% if @config['comments'] -%>
+<%   @config['comments'].each do |line| -%>
+# <%= line %>
+<%   end -%>
+<% end -%>
+<% if @config['auto'].nil? -%>
+auto <%= device %>
+<% elsif @config['auto'] -%>
+auto <%= device %>
+<% end -%>
+<% if @config['allow-hotplug'].nil? -%>
+allow-hotplug <%= device %>
+<% elsif @config['allow-hotplug'] -%>
+allow-hotplug <%= @config['device'] %>
+<% end -%>
+<% if method -%>
+iface <%= device %> <%= ipproto %> <%= method %>
+<%   if @config['vlan_raw_device'] -%>
+    vlan_raw_device   <%= @config['vlan_raw_device'] %>
+<%   end -%>
+<%   if @config['hostname'] -%>
+    hostname          <%= @config['hostname'] %>
+<%   end -%>
+<%   if @config['hwaddress'] -%>
+    hwaddress         <%= @config['hwaddress'] %>
+<%   end -%>
+<%   if address -%>
+<%     if method == '6to4' -%>
+    local             <%= address %>
+<%     else -%>
+    address           <%= address %>
+    netmask           <%= netmask %>
+<%     end -%>
+<%   end -%>
+<%   if broadcast -%>
+    broadcast         <%= broadcast %>
+<%   end -%>
+<%   if gateway -%>
+    gateway           <%= gateway %>
+<%   end -%>
+<%   if @config['multi_gateway'] -%>
+    multi_gateway     <%= @config['multi_gateway'] %>
+<%   end -%>
+<%   if @config['multi_gateway_weight'] -%>
+    multi_gateway_weight <%= @config['multi_gateway_weight'] %>
+<%   end -%>
+<%   if @config['multi_gateway_weight'] -%>
+    multi_preferred_prefixes <%= @config['multi_preferred_prefixes'] %>
+<%   end -%>
+<%   if @config['multi_table'] -%>
+    multi_table       <%= @config['multi_table'] %>
+<%   end -%>
+<%   if @config['slaves'] -%>
+    slaves            <%= @config['slaves'] %>
+<%   end -%>
+<%   if @config['bond-mode'] -%>
+    bond-mode         <%= @config['bond-mode'] %>
+<%   end -%>
+<%   if @config['bond-miimon'] -%>
+    bond-miimon       <%= @config['bond-miimon'] %>
+<%   end -%>
+<%   if @config['bond-downdelay'] -%>
+    bond-downdelay    <%= @config['bond-downdelay'] %>
+<%   end -%>
+<%   if @config['bond-updelay'] -%>
+    bond-updelay      <%= @config['bond-updelay'] %>
+<%   end -%>
+<%   if @config['bond-lacp-rate'] -%>
+    bond-lacp-rate    <%= @config['bond-lacp-rate'] %>
+<%   end -%>
+<%   if @config['xmit_hash_policy'] -%>
+    xmit_hash_policy  <%= @config['xmit_hash_policy'] %>
+<%   end -%>
+<%   if @config['bridge_ports'] -%>
+    bridge_ports      <%= @config['bridge_ports'] %>
+<%   end -%>
+<%   if @config['bridge_ageing'] -%>
+    bridge_ageing     <%= @config['bridge_ageing'] %>
+<%   end -%>
+<%   if @config['bridge_bridgeprio'] -%>
+    bridge_bridgeprio <%= @config['bridge_ageing'] %>
+<%   end -%>
+<%   if @config['bridge_fd'] -%>
+    bridge_fd         <%= @config['bridge_fd'] %>
+<%   end -%>
+<%   if @config['bridge_gcint'] -%>
+    bridge_gcint      <%= @config['bridge_gcint'] %>
+<%   end -%>
+<%   if @config['bridge_hello'] -%>
+    bridge_hello      <%= @config['bridge_hello'] %>
+<%   end -%>
+<%   if @config['bridge_gw'] -%>
+    bridge_gw         <%= @config['bridge_gw'] %>
+<%   end -%>
+<%   if @config['bridge_maxage'] -%>
+    bridge_maxage     <%= @config['bridge_maxage'] %>
+<%   end -%>
+<%   if @config['bridge_maxwait'] -%>
+    bridge_maxwait    <%= @config['bridge_maxwait'] %>
+<%   end -%>
+<%   if @config['bridge_pathcost'] -%>
+    bridge_pathcost   <%= @config['bridge_pathcost'] %>
+<%   end -%>
+<%   if @config['bridge_portprio'] -%>
+    bridge_portprio   <%= @config['bridge_portprio'] %>
+<%   end -%>
+<%   if @config['bridge_stp'] -%>
+    bridge_stp        <%= @config['bridge_stp'] %>
+<%   end -%>
+<%   if @config['bridge_waitport'] -%>
+    bridge_waitport   <%= @config['bridge_waitport'] %>
+<%   end -%>
+<%   if @config['pointopoint'] -%>
+    pointopoint       <%= @config['pointopoint'] -%>
+<%   end -%>
+<%   if @config['metric'] -%>
+    metric            <%= @config['metric'] %>
+<%   end -%>
+<%   if @config['mtu'] -%>
+    mtu               <%= @config['mtu'] %>
+<%   end -%>
+<%   if @config['provider'] -%>
+    provider          <%= @config['provider'] %>
+<%   end -%>
+<%   if @config['scope'] -%>
+    scope             <%= @config['scope'] %>
+<%   end -%>
+<%   if @config['pre-up'] -%>
+    pre-up            <%= @config['pre-up'] %>
+<%   end -%>
+<%   if @config['up'] -%>
+    up                <%= @config['up'] %>
+<%   end -%>
+<%   if @config['post-up'] -%>
+    post-up           <%= @config['post-up'] %>
+<%   end -%>
+<%   if @config['down'] -%>
+    down              <%= @config['down'] %>
+<% end -%>
+<%   if @config['pre-down'] -%>
+    pre-down          <%= @config['pre-down'] %>
+<%   end -%>
+<%   if @config['post-down'] -%>
+    post-down         <%= @config['post-down'] %>
+<%   end -%>
+<%   if @config['dns-search'] or @config['dns-nameservers'] -%>
+    # dns-* options are implemented by the resolvconf package, if installed
+<%   end -%>
+<%   if @config['dns-search'] -%>
+    dns-search <%= @config['dns-search'] %>
+<%   end -%>
+<%   if @config['dns-nameservers'] -%>
+    dns-nameservers <%= @config['dns-nameservers'] %>
+<%   end -%>
+<% end -%>

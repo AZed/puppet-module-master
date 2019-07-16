@@ -1,0 +1,3 @@
+/var/cache/nscd/(passwd|group|services|hosts)$ VarFile
+/@@{RUN}/nscd/(socket|nscd\.pid)$ VarFile
+/@@{RUN}/nscd$ VarDirInode

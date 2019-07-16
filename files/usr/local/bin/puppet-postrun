@@ -1,0 +1,61 @@
+#!/bin/sh
+# 
+# FILENAME:  puppet-postrun
+# AUTHOR:    Bennett Samowich <bennett.samowich@nasa.gov>
+# DATE:      2011-04-26
+#
+# DESCRIPTION:
+#  This script is intended to run via puppet and the postrun_command option.
+#
+#  This script grabs the syslog messages for the puppet run logged with the
+#  PPID of this script.  If the syslog messages do not contain "(noop)$"
+#  then they are written to the OUTFILE.  The OUTFILE can then be used by
+#  an external monitoring system such as Nagios to alert when a puppet run 
+#  fails.
+#
+# USAGE:
+#  * Copy this script to /usr/local/bin
+#  * Add the following line to the [main] section in puppet.conf
+#    postrun_command=/usr/local/bin/puppet-postrun
+#  * Create a puppet recipe to touch OUTFILE, or echo DATE into it,  on
+#    every run.  This will ensure that we can distinguish between live and
+#    noop invocations of puppet.
+# 
+##############################################################################
+
+# Logger command
+LOGGER="logger -i -t \"puppet-postrun\""
+
+# File the puppet results should be stored in
+OUTFILE="$(facter --puppet puppetvardir)/state/puppet.last_log"
+
+##############################################
+# You should be safe to leave the rest alone #
+##############################################
+
+# Log the start of this script
+${LOGGER} "puppet-agent[${PPID}]: executing postrun_command: $0"
+
+# Arguments for grep to pull results of this run from syslog
+GREPARG="$(date +"%b %d %H:").*puppet-agent\[${PPID}\]:"
+
+# Pull the results of this run from syslog
+PUPPETLOG=`grep "${GREPARG}" /var/log/syslog`
+
+# Determine if we're running in --noop mode
+IS_NOOP=`echo ${PUPPETLOG} | grep -c "(noop)$"`
+
+# If we're running in "live" mode, then record the results otherwise
+# skip writing the results and only log that we're in noop mode
+if [ ${IS_NOOP} -eq 0 ]
+then
+  ${LOGGER} "puppet-agent[${PPID}]: Running in live mode, updating last_run"
+  ( echo ""
+    echo "${PUPPETLOG}"
+  ) > "${OUTFILE}"
+else
+  ${LOGGER} "puppet-agent[${PPID}]: Running in noop mode, not updating last_run"
+fi
+
+# We end by calling the etckeeper post-commit script
+/etc/puppet/etckeeper-commit-post

@@ -1,0 +1,13 @@
+<% if @sshd_deny_root -%>
+root
+<% end -%>
+<% if @sshd_deny_users
+     @sshd_deny_users.each do |user| -%>
+<%= user %>
+<%   end -%>
+<% end -%>
+<% if @sshd_deny_users_templates
+     @sshd_deny_users_templates.each do |template| -%>
+<%= scope.function_template(["#{template}"]) -%>
+<%   end -%>
+<% end -%>

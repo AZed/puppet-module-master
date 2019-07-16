@@ -1,0 +1,41 @@
+#
+# HostnameLookups: Log the names of clients or just their IP addresses
+# e.g., www.apache.org (on) or 204.62.129.132 (off).
+# The default is off because it'd be overall better for the net if people
+# had to knowingly turn this feature on, since enabling it means that
+# each client request will result in AT LEAST one lookup request to the
+# nameserver.
+#
+HostnameLookups Off
+
+# ErrorLog: The location of the error log file.
+# If you do not specify an ErrorLog directive within a <VirtualHost>
+# container, error messages relating to that virtual host will be
+# logged here.  If you *do* define an error logfile for a <VirtualHost>
+# container, that host's errors will be logged there and not here.
+#
+ErrorLog /var/log/apache2/error.log
+
+# NJB:  Define AccessLog here to blanket overall APACHE access
+#  Individual Virtual Hosts may replicate these accesses at their own level
+
+CustomLog /var/log/apache2/access.log combined
+
+#
+# LogLevel: Control the number of messages logged to the error_log.
+# Possible values include: debug, info, notice, warn, error, crit,
+# alert, emerg.
+#
+LogLevel warn
+
+#
+# The following directives define some format nicknames for use with
+# a CustomLog directive (see below).
+
+# Expanded "combined" log format per CIS:
+#LogFormat "%h %l %u %t \%m\ \"%r\" \%q\ %>s %b \"%{Referer}i\" \"%{User Agent}i\"" combined
+
+LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+LogFormat "%h %l %u %t \"%r\" %>s %b" common
+LogFormat "%{Referer}i -> %U" referer
+LogFormat "%{User-agent}i" agent

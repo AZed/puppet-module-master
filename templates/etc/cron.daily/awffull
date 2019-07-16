@@ -1,0 +1,53 @@
+#!/bin/sh
+# /etc/cron.daily/awffull: AwfFull daily maintenance script
+# Written by Jose Carlos Medeiros <jose@psabs.com.br> based on
+# webalizer.cron.daily that was in webalizer package
+
+# This script just run awffull agains all .conf files in /etc/awffull directory
+
+AWFFULL=/usr/bin/awffull
+AWFFULL_CONFDIR=/etc/awffull
+
+[ -x ${AWFFULL} ] || exit 0;
+[ -d ${AWFFULL_CONFDIR} ] || exit 0;
+
+for i in ${AWFFULL_CONFDIR}/*.conf; do
+  # run agains a rotated or normal logfile
+  LOGFILE=`awk '$1 ~ /^LogFile$/ {print $2}' $i`;
+
+  # empty ?
+  [ -s "${LOGFILE}" ] || { echo "ERROR: LogFile not found: ${LOGFILE}"; continue; };
+  # readable ?
+  [ -r "${LOGFILE}" ] || { echo "ERROR: LogFile is not readable: ${LOGFILE}"; continue; };
+
+  # there was a output ?
+  OUTDIR=`awk '$1 ~ /^OutputDir$/ {print $2}' $i`;
+  #  exists something ?
+  [ "${OUTDIR}" != "" ] || { echo "ERROR: OutputDir not defined: ${OUTDIR}"; continue; };
+  # its a directory ?
+  [ -d ${OUTDIR} ] || { echo "ERROR: OutputDir is not a directory: ${OUTDIR}"; continue; };
+  # its writable ?
+  [ -w ${OUTDIR} ] || { echo "ERROR: OutputDir not writable: ${OUTDIR}"; continue; };
+
+  # Run Really quietly, exit with status code if !0
+  ${AWFFULL} -c ${i} -Q || { echo "ERROR: Running awffull, exit status: $?"; continue; };
+  RET=$?;
+
+  # Non rotated log file
+  NLOGFILE=`awk '$1 ~ /^LogFile$/ {gsub(/\.[0-9]+(\.gz)?/,""); print $2}' $i`;
+
+  # check current log, if last log is a rotated logfile
+  if [ "${LOGFILE}" != "${NLOGFILE}" ]; then
+    # empty ?
+    [ -s "${NLOGFILE}" ] || { echo "ERROR: Rotated LogFile not found: ${NLOGFILE}"; continue; };
+    # readable ?
+    [ -r "${NLOGFILE}" ] || { echo "ERROR: Rotated LogFile is not readable: ${NLOGFILE}"; continue; };
+
+    ${AWFFULL} -c ${i} -Q ${NLOGFILE};
+    RET=$?;
+  fi;
+done;
+
+# exit with awffull's exit code
+exit $RET;
+

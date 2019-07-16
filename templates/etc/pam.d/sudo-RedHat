@@ -1,0 +1,18 @@
+#%PAM-1.0
+
+<% if @radius.respond_to?('[]') and @radius['sudo'] and @radius['shared_secret'] -%>
+<%   if @radius['prompt'] -%>
+# Require RADIUS authentication before all others (prompt requires >= v1.4)
+auth requisite pam_radius_auth.so prompt=<%= @radius['prompt'] %>
+
+<%   else -%>
+# Require RADIUS authentication before all others
+auth requisite pam_radius_auth.so
+
+<%   end -%>
+<% end -%>
+auth       include	system-auth
+account    include	system-auth
+password   include	system-auth
+session    optional	pam_keyinit.so revoke
+session    required	pam_limits.so

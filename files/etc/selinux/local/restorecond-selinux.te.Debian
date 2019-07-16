@@ -1,0 +1,14 @@
+
+module restorecond-selinux 1.1;
+
+require {
+	type var_run_t;
+        type initrc_t;
+	type restorecond_t;
+	class sock_file write;
+        class unix_stream_socket connectto;
+}
+
+#============= restorecond_t ==============
+allow restorecond_t var_run_t:sock_file write;
+allow restorecond_t initrc_t:unix_stream_socket connectto;

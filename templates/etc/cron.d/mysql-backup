@@ -1,0 +1,5 @@
+# cron.d file for MySQL backup
+
+### Backup MySQL databases at midnight
+0 0 * * * root /usr/local/sbin/backup-mysql-database.sh 1>/dev/null
+

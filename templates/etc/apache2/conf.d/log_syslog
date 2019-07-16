@@ -1,0 +1,5 @@
+# This is a simple configuration for /etc/apache2/conf.d that activates syslog
+# logging.  The LogFormat adds the ServerName being requested.
+LogFormat "%v %h %l %u %t \"%r\" \%q\ %>s %b \"%{Referer}i\" \"%{User Agent}i\"" syslog
+CustomLog |/usr/local/bin/apache2_syslog syslog
+

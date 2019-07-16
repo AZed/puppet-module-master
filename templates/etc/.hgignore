@@ -1,0 +1,82 @@
+# use glob syntax
+syntax: glob
+
+# new and old versions of conffiles, stored by dpkg
+*.dpkg-*
+*.ucf-*
+
+# Other backup or temporary files
+*.backup
+*.bak
+*.cfsaved
+*.default
+*.old
+*.old.*
+*.orig
+*.puppet-bak
+*.rpmnew
+*.rpmorig
+*.rpmsave
+*.save
+*.YaST2save
+*.yast2save
+*~
+.*.sw?
+.sw?
+\#*\#
+DEADJOE
+group-
+gshadow-
+passwd-
+shadow-
+
+# mount(8) records system state here, no need to store these
+blkid.tab
+blkid.tab.old
+
+# CUPS autogenerates these files, and they can change frequently
+cups/ppd/
+cups/printers.conf
+cups/printers.conf.O
+cups/subscriptions.conf
+cups/subscriptions.conf.O
+printcap
+
+# Tomcat may periodically reorder the contents of this file,
+# generating spurious change entries
+tomcat5.5/tomcat-users.xml
+
+# some other files in /etc that typically do not need to be tracked
+*.elc
+*.example
+*.lock
+*.LOCK
+*.pyc
+*.pyo
+*.swp
+.*.swp
+*.tar.gz
+.initctl
+.pwd.lock
+adjtime
+aliases.db
+apparmor.d/cache/*
+init.d/.depend.*
+ld.so.cache
+lvm/archive
+lvm/backup
+lvm/cache
+mtab
+mtab.fuselock
+network/run
+nologin
+ntp.conf.dhcp
+openvpn/openvpn-status.log
+prelink.cache
+service/*/supervise/*
+service/*/log/supervise/*
+sv/*/supervise/*
+sv/*/log/supervise/*
+webmin/fsdump/*.status
+webmin/webmin/oscache
+X11/xdm/authdir/authfiles/*

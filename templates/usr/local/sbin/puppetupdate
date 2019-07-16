@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+# This script is only here as a sudo helper to allow puppet agent -t
+# to be run with no additional arguments.
+
+/usr/bin/puppet agent -t | tee -a /var/log/puppet/puppetupdate.log

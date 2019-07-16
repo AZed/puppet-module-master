@@ -1,0 +1,10 @@
+module ssh-sc-auth 1.2;
+
+require {
+        type ssh_keygen_exec_t;
+        type sshd_t;
+        class file { execute open read execute_no_trans };
+}
+
+#============= sshd_t ==============
+allow sshd_t ssh_keygen_exec_t:file {execute open read execute_no_trans};

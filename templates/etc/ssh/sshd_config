@@ -1,0 +1,15 @@
+<% if @templates -%>
+<%   @templates.each do |template| -%>
+<%= scope.function_template_v3(["#{template}"]) -%>
+
+<%   end -%>
+<% else -%>
+<%= scope.function_template_v3(['master/etc/ssh/sshd_config-default']) -%>
+
+<% end -%>
+<% if @final_templates -%>
+<%   @final_templates.each do |template| -%>
+<%= scope.function_template_v3(["#{template}"]) -%>
+
+<%   end -%>
+<% end -%>

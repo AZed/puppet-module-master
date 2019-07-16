@@ -1,0 +1,8 @@
+#!/bin/sh
+#
+# Refresh the GPG keys on root's keyring
+#
+
+gpg --homedir /root/.gnupg \
+    --keyserver <%= @keyserver %> \
+    --refresh-keys 2> /dev/null

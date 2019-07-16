@@ -1,0 +1,1 @@
+umask <%= @umask_default %>

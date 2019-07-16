@@ -1,0 +1,23 @@
+<% if @urlpath -%>
+Alias <%= @urlpath %>/wp-content /var/lib/wordpress/wp-content
+Alias <%= @urlpath %> /usr/share/wordpress
+<% else -%>
+Alias /wp-content /var/lib/wordpress/wp-content
+<% end -%>
+<% if @redirect_root and @urlpath -%>
+RedirectMatch ^/$ <%= @urlpath %>
+<% end -%>
+
+<Directory /usr/share/wordpress>
+    Options FollowSymLinks
+    AllowOverride Limit Options FileInfo
+    DirectoryIndex index.php
+    Order allow,deny
+    Allow from all
+</Directory>
+<Directory /var/lib/wordpress/wp-content>
+    RedirectMatch 403 /\.(git|gitignore|hg|hgignore|svn)(/|$)
+    Options FollowSymLinks
+    Order allow,deny
+    Allow from all
+</Directory>

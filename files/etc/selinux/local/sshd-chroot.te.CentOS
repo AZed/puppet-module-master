@@ -1,0 +1,78 @@
+module sshd-chroot 1.87;
+
+require {
+        type ssh_exec_t;
+        type home_root_t;
+        type ld_so_t;
+        type sshd_t;
+        type lib_t;
+        type syslogd_t;
+        type configfs_t;
+        type nscd_var_run_t;
+        type chkpwd_t;
+        type user_tty_device_t;
+        type unconfined_t;
+        type bin_t;
+        type shell_exec_t;
+	type xserver_port_t;
+	type user_home_t;
+	type user_home_dir_t;
+        class dir getattr;
+        class capability { sys_ptrace mknod };
+        class chr_file {  getattr open read write create setattr unlink ioctl };
+        class lnk_file { create setattr unlink };
+        class dir { rmdir setattr write add_name remove_name };
+        class file { link append execute rename create execute_no_trans getattr open read write setattr unlink };
+        class process { noatsecure siginh };
+        class sock_file { create getattr link setattr unlink write };
+	class tcp_socket name_connect;
+}
+
+#============= sshd_t ==============
+
+allow sshd_t home_root_t:dir { setattr rmdir };
+
+allow sshd_t home_root_t:lnk_file { create unlink };
+allow sshd_t home_root_t:chr_file { getattr open read write setattr unlink create ioctl };
+
+allow sshd_t user_home_dir_t:lnk_file { create unlink };
+allow sshd_t user_home_dir_t:chr_file { getattr open read write setattr unlink create ioctl };
+
+allow sshd_t ld_so_t:file execute_no_trans;
+
+allow sshd_t lib_t:lnk_file { create setattr unlink};
+allow sshd_t self:capability { sys_ptrace mknod };
+allow sshd_t ssh_exec_t:file { read execute open };
+
+allow sshd_t home_root_t:file { link unlink execute append rename unlink setattr create getattr open write read execute_no_trans };
+
+allow sshd_t user_home_dir_t:file { link unlink execute append rename unlink setattr create getattr open write read execute_no_trans };
+
+allow sshd_t configfs_t:dir getattr;
+
+allow sshd_t nscd_var_run_t:file { read getattr };
+allow chkpwd_t nscd_var_run_t:file read;
+
+allow sshd_t unconfined_t:process { noatsecure siginh };
+
+allow sshd_t user_tty_device_t:chr_file getattr;
+
+allow syslogd_t home_root_t:dir { add_name write remove_name };
+
+allow syslogd_t user_home_dir_t:dir { add_name write remove_name };
+
+allow sshd_t bin_t:file unlink;
+
+allow sshd_t home_root_t:sock_file { getattr link unlink write };
+
+allow sshd_t user_home_t:sock_file { getattr link unlink write };
+
+allow sshd_t shell_exec_t:file unlink;
+
+allow sshd_t xserver_port_t:tcp_socket name_connect;
+
+allow syslogd_t home_root_t:sock_file { create setattr unlink };
+allow syslogd_t user_home_dir_t:sock_file { create setattr unlink };
+
+
+allow syslogd_t nscd_var_run_t:file read;

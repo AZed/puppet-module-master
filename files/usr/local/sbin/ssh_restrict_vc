@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# ssh_restrict_vc
+#
+# Usable as a ssh authorized_keys command to restrict commands to
+# version control only.
+
+case "$SSH_ORIGINAL_COMMAND" in
+*\&*)
+    echo "Invalid command"
+    ;;
+*\(*)
+    echo "Invalid command"
+    ;;
+*\{*)
+    echo "Invalid command"
+    ;;
+*\;*)
+    echo "Invalid command"
+    ;;
+*\<*)
+    echo "Invalid command"
+    ;;
+*\`*)
+    echo "Invalid command"
+    ;;
+*\|*)
+    echo "Invalid command"
+    ;;
+cvs*|git*|hg*|svn*)
+    sh -c "$SSH_ORIGINAL_COMMAND"
+    ;;
+*)
+    echo "Invalid command"
+    ;;
+esac

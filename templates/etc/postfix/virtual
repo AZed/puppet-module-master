@@ -1,0 +1,17 @@
+#
+# Postfix Virtual Aliases
+#
+# For documentation on this format, see "man 5 virtual" or online at
+# http://www.postfix.org/virtual.5.html
+#
+
+<% if @params['entries'] and @params['entries'].respond_to?('each') -%>
+<%   @params['entries'].each do |entry| -%>
+<%= entry %>
+<%   end -%>
+<% end -%>
+<% if @params['templates'] and @params['templates'].respond_to?('each') -%>
+<%   @params['templates'].each do |template| -%>
+<%= scope.function_template(["#{template}"]) -%>
+<%   end -%>
+<% end -%>

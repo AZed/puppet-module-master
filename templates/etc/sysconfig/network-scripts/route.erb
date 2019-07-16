@@ -1,0 +1,11 @@
+<% if @templates -%>
+<%   @templates.each do |template| -%>
+<%= scope.function_template(["#{template}"]) -%>
+
+<%   end -%>
+<% end -%>
+<% if @lines -%>
+<%   @lines.each do |line| -%>
+<%= line %>
+<%   end -%>
+<% end -%>

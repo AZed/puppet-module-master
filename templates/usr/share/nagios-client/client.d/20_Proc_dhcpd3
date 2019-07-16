@@ -1,0 +1,3 @@
+# Check that dhcpd3 is running
+CheckLocalProcs "dhcpd" 1:1
+

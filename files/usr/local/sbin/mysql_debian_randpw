@@ -1,0 +1,48 @@
+#!/bin/bash
+### $Id$
+###
+### FILENAME:  mysql_debian_randpw
+### AUTHOR:    Bennett Samowich <bennett.samowich@nasa.gov>
+### DATE:      2009-01-12
+###
+### DESCRIPTION:
+###   Set the MySQL user 'debian-sys-maint' user's password to a
+###   randomly generated password.
+###
+###   NOTE:  This is somewhat of a blunt instrument in that it makes use
+###          of a locally available configuration file to gain automated
+###          access into the database server.  The 'debian-sys-maint' user
+###          "should" only have localhost as the host it can connect from.
+###          With all of this being said, we're still going to set the 
+###          password to something really obnoxious.  If we really want to 
+###          get carried away, this can also be run from cron.
+###
+###############################################################################
+
+### Tag to use for backup files
+BAKTAG=".mysql_debian_randpw"
+
+### Generate a new random password
+NEWPW=`head -n 4096 /dev/urandom | sha256sum | awk '{print $1}'`
+
+### Set the new password for the cacti user
+echo "Setting new password..."
+DBUSER="debian-sys-maint"
+echo "UPDATE mysql.user SET Password=PASSWORD('${NEWPW}') WHERE User='${DBUSER}'; FLUSH PRIVILEGES;"  | /usr/bin/mysql --defaults-file=/etc/mysql/debian.cnf
+
+
+### Process /etc/mysql/debian.cnf
+FILE="/etc/mysql/debian.cnf"
+echo "Fixing '${FILE}'..."
+cp ${FILE}{,$BAKTAG}
+cat "${FILE}" | awk -v newpw=${NEWPW} '{
+   if (match($0, "^password = ")) {
+      $0 = "password = " newpw;
+   }
+   print $0
+}' > ${FILE}.new
+mv ${FILE}{.new,}
+chmod 600 ${FILE}
+chown root.root ${FILE}
+ 
+exit 0

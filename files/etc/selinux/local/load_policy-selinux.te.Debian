@@ -1,0 +1,10 @@
+module load_policy-selinux 1.0;
+
+require {
+        type load_policy_t;
+        type user_tmp_t;
+        class file { read write };
+}
+
+#============ load_policy_t 
+allow load_policy_t user_tmp_t:file { read write };

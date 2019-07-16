@@ -1,0 +1,22 @@
+module gpg-selinux 1.4;
+
+require {
+        type var_run_t;
+        type var_t;
+        type system_cronjob_t;
+        type gpg_helper_t;
+        type initrc_t;
+        class sock_file write;
+        class fd use;
+	class file { read };
+        class fifo_file write;
+        class unix_stream_socket connectto;
+}
+
+#============= gpg_helper_t ==============
+allow gpg_helper_t system_cronjob_t:fd use;
+allow gpg_helper_t system_cronjob_t:fifo_file write;
+allow gpg_helper_t var_run_t:sock_file write;
+allow gpg_helper_t initrc_t:unix_stream_socket connectto;
+allow gpg_helper_t initrc_t:fd use;
+allow gpg_helper_t var_t:file read;

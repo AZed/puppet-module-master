@@ -1,0 +1,23 @@
+
+module login-selinux 1.5;
+
+require {
+	type var_run_t;
+        type var_t;
+	type local_login_t;
+	type sysctl_crypto_t;
+        type initrc_t;
+	class sock_file write;
+	class dir search;
+        class unix_stream_socket connectto;
+        class file { open read getattr };
+        class fd use;
+}
+
+#============= local_login_t ==============
+allow local_login_t sysctl_crypto_t:dir search;
+allow local_login_t var_run_t:sock_file write;
+allow local_login_t initrc_t: unix_stream_socket connectto;
+allow local_login_t sysctl_crypto_t:file { open read getattr };
+allow local_login_t initrc_t:fd use;
+allow local_login_t var_t:file read;

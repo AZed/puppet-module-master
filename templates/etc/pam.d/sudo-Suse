@@ -1,0 +1,17 @@
+#%PAM-1.0
+<% if @radius.respond_to?('[]') and @radius['sudo'] and @radius['shared_secret'] -%>
+<%   if @radius['prompt'] -%>
+# Require SecurID authentication (prompt requires >= v1.4)
+auth requisite pam_radius_auth.so prompt=<%= @radius['prompt'] %>
+
+<%   else -%>
+# Require SecurID authentication
+auth requisite pam_radius_auth.so
+
+<%   end -%>
+<% end -%>
+auth     include        common-auth
+account  include        common-account
+password include        common-password
+session  include        common-session
+# session  optional       pam_xauth.so

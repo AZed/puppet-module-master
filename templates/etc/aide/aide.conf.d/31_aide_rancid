@@ -1,0 +1,13 @@
+!/var/log/rancid/.*
+!/var/lib/rancid/[a-zA-Z0-9]+/routers.up.missed
+!/var/lib/rancid/[a-zA-Z0-9]+/configs/.*.new
+/var/lib/rancid/[a-zA-Z0-9]+/routers.all      VarFile-i
+/var/lib/rancid/[a-zA-Z0-9]+/routers.down     VarFile-i
+/var/lib/rancid/[a-zA-Z0-9]+/routers.up       VarFile-i
+/var/lib/rancid/[a-zA-Z0-9]+/configs/.*       VarFile-i
+/var/lib/rancid/[a-zA-Z0-9]+/                 VarDir
+/var/lib/rancid/[a-zA-Z0-9]+/CVS/             VarDir
+/var/lib/rancid/[a-zA-Z0-9]+/CVS/.*/          VarDir
+/var/lib/rancid/[a-zA-Z0-9]+/CVS/.*/configs   VarDir
+/var/lib/rancid                               VarDir-m
+/var/lib/rancid/CVS/[a-zA-Z0-9]+/configs/.*,v VarFile-i

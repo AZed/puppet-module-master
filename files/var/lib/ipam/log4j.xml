@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+<appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+   <layout class="org.apache.log4j.PatternLayout">
+     <param name="ConversionPattern"
+	    value="%d %-5p [%t] %C{2} (%F:%L) - %m%n"/>
+   </layout>	    
+</appender>
+
+<appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+    <param name="File" value="log/ns_webservice.log"/>
+    <param name="Append" value="true"/>
+    <param name="MaxFileSize" value="1000KB"/>
+    <param name="MaxBackupIndex" value="2"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d %-5p [%t] %C{2} (%F:%L) - %m%n"/>
+    </layout>
+  </appender>
+  
+<appender name="FILE_apache" class="org.apache.log4j.RollingFileAppender">
+    <param name="File" value="log/ns_apache_webservice.log"/>
+    <param name="Append" value="true"/>
+    <param name="MaxFileSize" value="1000KB"/>
+    <param name="MaxBackupIndex" value="2"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d %-5p [%t] %C{2} (%F:%L) - %m%n"/>
+    </layout>
+  </appender>
+  
+
+<!-- log detail configuration -->
+	<logger name="com.diamondip.netcontrol">
+	   <level value="error" />
+   	   <appender-ref ref="FILE_apache" />	     	   
+	 </logger>
+
+	<logger name="com.diamondip.ipcontrol">
+	   <level value="error" />
+   	   <appender-ref ref="FILE_apache" />	     	   
+	 </logger>
+	 
+	<logger name="com.diamondip.incontrol">
+	   <level value="error" />
+   	   <appender-ref ref="FILE_apache" />	     	   
+	 </logger>
+	
+	<logger name="com.diamondip.netcontrol.cli.BlockIntegrityCheck">
+	   <level value="info" />
+   	   <appender-ref ref="STDOUT" />	     	   
+	 </logger>
+
+	<!--<logger name="net.sf.hibernate">
+	  <level value="info" />
+   	   <appender-ref ref="FILE" />	     	   
+	</logger>-->
+
+	<logger name="org.springframework">
+	  <level value="error" />	  
+   	   <appender-ref ref="FILE" />	     	   
+	</logger>
+	
+	
+	<logger name="org.apache">
+	  <level value="error" />
+   	   <appender-ref ref="FILE_apache" />	  
+ 	</logger>
+
+	<root>
+	  <level value="warn"/>
+	  <appender-ref ref="FILE"/>
+	</root>
+	
+</log4j:configuration>

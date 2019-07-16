@@ -1,0 +1,18 @@
+[<%= @repoheader %>]
+<% if @osid_real -%>
+name=<%= @reponame_real %> (<%= @osid_real %>)
+<% else -%>
+name=<%= @reponame_real %>
+<% end -%>
+enabled=1
+<% if @autorefresh -%>
+autorefresh=1
+<% else -%>
+autorefresh=0
+<% end -%>
+baseurl=<%= @baseurl_real %>
+type=rpm-md
+<% if @gpgkey_real -%>
+gpgcheck=1
+gpgkey=<%= @gpgkey_real %>
+<% end -%>

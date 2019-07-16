@@ -1,0 +1,19 @@
+Package: *
+Pin: release o=Debian,n=stretch
+Pin-Priority: 500
+
+Package: *
+Pin: release o=Debian,a=stable
+Pin-Priority: 300
+
+Package: *
+Pin: release o=Debian,a=testing
+Pin-Priority: -1
+
+Package: *
+Pin: release o=Debian,n=sid
+Pin-Priority: -1
+
+Package: *
+Pin: release o=Debian,a=unstable
+Pin-Priority: -1

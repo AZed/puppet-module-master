@@ -1,0 +1,20 @@
+#
+# PAM configuration for sudo access
+#
+# This is controlled from a Puppet template.  Do not modify directly.
+#
+
+<% if @radius.respond_to?('[]') and @radius['sudo'] and @radius['shared_secret'] -%>
+<%   if @radius['prompt'] -%>
+# Require RADIUS authentication before all others (prompt requires >= v1.4)
+auth requisite pam_radius_auth.so prompt=<%= @radius['prompt'] %>
+
+<%   else -%>
+# Require RADIUS authentication before all others
+auth requisite pam_radius_auth.so
+
+<%   end -%>
+<% end -%>
+@include common-auth
+@include common-account
+@include common-session-noninteractive

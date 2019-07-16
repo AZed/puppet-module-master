@@ -1,0 +1,2 @@
+CheckLocalProcs "sshd" 1:1024
+

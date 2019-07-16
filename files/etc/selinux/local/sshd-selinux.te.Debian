@@ -1,0 +1,36 @@
+module sshd-selinux 1.8;
+
+require {
+        type var_run_t;
+        type sshd_t;
+        class sock_file write;
+        type bin_t;
+        type sysctl_crypto_t;
+        type sshd_t;
+        type port_t;
+        type initrc_t;
+        type pyzor_port_t;
+	type netsupport_port_t;
+        class unix_stream_socket connectto;
+        class dir { search write create setattr };
+        class file { execute read open execute_no_trans getattr create write setattr };
+        class udp_socket name_bind;
+        type var_t;
+        type home_root_t;
+}
+
+#============= sshd_t ==============
+allow sshd_t var_run_t:sock_file write;
+allow sshd_t bin_t:file { execute execute_no_trans} ;
+allow sshd_t bin_t:file {read open};
+allow sshd_t initrc_t:unix_stream_socket connectto;
+allow sshd_t port_t:udp_socket name_bind;
+allow sshd_t pyzor_port_t:udp_socket name_bind;
+allow sshd_t sysctl_crypto_t:dir search;
+allow sshd_t bin_t:file { read open };
+allow sshd_t sysctl_crypto_t:file { read open };
+allow sshd_t sysctl_crypto_t:file getattr;
+allow sshd_t var_t:file read;
+allow sshd_t home_root_t:dir { create write setattr };
+allow sshd_t home_root_t:file { open create write setattr };
+allow sshd_t netsupport_port_t:udp_socket name_bind;

@@ -1,0 +1,14 @@
+module rsyslog-imfile-auditd-selinux 1.5;
+
+require {
+        type syslogd_t;
+        type auditd_log_t;
+	type var_t;
+        class dir { getattr search read open };
+        class file { read getattr open ioctl };
+}
+
+#============= syslogd_t ==============
+allow syslogd_t auditd_log_t:dir { getattr search read open };
+allow syslogd_t auditd_log_t:file { getattr read open ioctl };
+allow syslogd_t var_t:dir { getattr search read };

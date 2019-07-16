@@ -1,0 +1,8 @@
+# start of DCV settings
+net.core.rmem_max = 2097152
+net.ipv4.tcp_rmem = 4096 786432 2097152
+net.core.wmem_max = 2097152
+net.ipv4.tcp_wmem = 4096 786432 2097152
+net.ipv4.tcp_mem = 2097152 2097152 2097152
+net.core.optmem_max = 40960
+# end of DCV settings

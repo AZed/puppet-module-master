@@ -1,0 +1,185 @@
+#
+# This device is managed by Puppet.  Changes will be overwritten.
+#
+
+<% # Default Variable Setup
+   if @config['ipaddr']
+       address = @config['ipaddr']
+       addressblock = address[/(\d{1,3}\.\d{1,3}\.\d{1,3})\.\d{1,3}/,1]
+       address1 = address[/(\d{1,3})\.\d{1,3}\.\d{1,3}\.\d{1,3}/,1].to_i
+       address2 = address[/\d{1,3}\.(\d{1,3})\.\d{1,3}\.\d{1,3}/,1].to_i
+       address3 = address[/\d{1,3}\.\d{1,3}\.(\d{1,3})\.\d{1,3}/,1].to_i
+       address4 = address[/\d{1,3}\.\d{1,3}\.\d{1,3}\.(\d{1,3})/,1].to_i
+   elsif @config['address']
+       address = @config['address']
+       addressblock = address[/(\d{1,3}\.\d{1,3}\.\d{1,3})\.\d{1,3}/,1]
+       address1 = address[/(\d{1,3})\.\d{1,3}\.\d{1,3}\.\d{1,3}/,1].to_i
+       address2 = address[/\d{1,3}\.(\d{1,3})\.\d{1,3}\.\d{1,3}/,1].to_i
+       address3 = address[/\d{1,3}\.\d{1,3}\.(\d{1,3})\.\d{1,3}/,1].to_i
+       address4 = address[/\d{1,3}\.\d{1,3}\.\d{1,3}\.(\d{1,3})/,1].to_i
+   end
+
+   if @config['netmask'].nil?
+       netmask = '255.255.255.0'
+   else
+       netmask = @config['netmask']
+   end
+   netmask1 = netmask[/(\d{1,3})\.\d{1,3}\.\d{1,3}\.\d{1,3}/,1].to_i
+   netmask2 = netmask[/\d{1,3}\.(\d{1,3})\.\d{1,3}\.\d{1,3}/,1].to_i
+   netmask3 = netmask[/\d{1,3}\.\d{1,3}\.(\d{1,3})\.\d{1,3}/,1].to_i
+   netmask4 = netmask[/\d{1,3}\.\d{1,3}\.\d{1,3}\.(\d{1,3})/,1].to_i
+
+   if @config['gateway'].nil?
+       if address1 and address2 and address3 and address4 and
+         netmask1 and netmask2 and netmask3 and netmask4
+           gateway1 = address1 & netmask1
+           gateway2 = address2 & netmask2
+           gateway3 = address3 & netmask3
+           gateway4 = (address4 & netmask4) + 1
+           gateway = gateway1.to_s + "." + gateway2.to_s + "." + gateway3.to_s + "." + gateway4.to_s
+       else
+           gateway = false
+       end
+   else
+       gateway = @config['gateway']
+   end
+
+   if @config['ipv6addr']
+       # This currently only supports IPv6 over IPv4 addresses
+       ipv6addressblock = @config['ipv6addr'][/(\h{1,4}:\h{1,4}:\h{1,4}:\h{1,4}::\d{1,3}\.\d{1,3}\.\d{1,3})\.\d{1,3}/,1]
+   end
+   if @config['ipv6_defaultgw'].nil?
+       if ipv6addressblock
+           ipv6_defaultgw = ipv6addressblock + ".1"
+       else
+           ipv6_defaultgw = false
+       end
+   else
+       ipv6_defaultgw = @config['ipv6_defaultgw']
+   end
+-%>
+<% if @config['comments'] -%>
+<%   @config['comments'].each do |line| -%>
+# <%= line %>
+<%   end -%>
+<% end -%>
+DEVICE=<%= @title %>
+<% if @config['physdev'] -%>
+PHYSDEV=<%= @config['physdev'] %>
+<% end -%>
+<% if @config['name'] -%>
+NAME="<%= @config['name'] %>"
+<% end -%>
+<% if @config['type'] -%>
+TYPE=<%= @config['type'] %>
+<% else -%>
+TYPE=Ethernet
+<% end -%>
+<% if @config['mtu'] -%>
+MTU=<%= @mtu -%>
+<% end -%>
+<% # If onboot is undefined, we assume yes, since we bothered to
+   # configure this in the first place
+   if @config['onboot'].nil? -%>
+ONBOOT=yes
+<% elsif @config['onboot']
+   # This could be boolean true or a text string -%>
+<%   if !!@config['onboot'] == @config['onboot'] -%>
+ONBOOT=yes
+<%   else -%>
+ONBOOT=<%= @config['onboot'] %>
+<%   end -%>
+<% else -%>
+ONBOOT=no
+<% end -%>
+<% if @config['bootproto'] -%>
+BOOTPROTO=<%= @config['bootproto'] %>
+<% else -%>
+BOOTPROTO=none
+<% end -%>
+<% if @config['bridge'] -%>
+BRIDGE=<%= @config['bridge'] %>
+<% end -%>
+<% if @config['hwaddr'] -%>
+HWADDR=<%= @config['hwaddr'] %>
+<% end -%>
+<% if address -%>
+IPADDR=<%= address %>
+<% if @config['ipaddr_start'] -%>
+IPADDR_START=<%= @config['ipaddr_start'] %>
+<% end -%>
+<% if @config['ipaddr_end'] -%>
+IPADDR_END=<%= @config['ipaddr_end'] %>
+<% end -%>
+<% if @config['clonenum_start'] -%>
+CLONENUM_START=<%= @config['clonenum_start'] %>
+<% end -%>
+NETMASK=<%= netmask %>
+<%   if gateway -%>
+GATEWAY=<%= gateway %>
+<%   end -%>
+<% end -%>
+<% if @config['no_aliasrouting'] -%>
+<%   if !!@config['no_aliasrouting'] == @config['no_aliasrouting'] -%>
+NO_ALIASROUTING=yes
+<%   else -%>
+NO_ALIASROUTING=<%= @config['no_aliasrouting'] %>
+<%   end -%>
+<% end -%>
+<% if @config['ipv6init'] -%>
+<%   if !!@config['ipv6init'] == @config['ipv6init'] -%>
+IPV6INIT=yes
+<%   else -%>
+IPV6INIT=<%= @config['ipv6init'] %>
+<%   end -%>
+<% elsif @config['ipv6init'].nil? and @config['ipv6addr'] -%>
+IPV6INIT=yes
+<% end -%>
+<% if @config['ipv6addr'] -%>
+IPV6ADDR=<%= @config['ipv6addr'] %>
+<% end -%>
+<% if @config['ipv6_autoconf'] -%>
+IPV6_AUTOCONF=<%= @config['ipv6_autoconf'] %>
+<% end -%>
+<% if ipv6_defaultgw -%>
+IPV6_DEFAULTGW=<%= ipv6_defaultgw %>
+<% end -%>
+<% if @config['ipv6forwarding'] -%>
+IPV6FORWARDING=<%= @config['ipv6forwarding'] %>
+<% end -%>
+<% if @config['master'] -%>
+MASTER=<%= @config['master'] %>
+<% end -%>
+<% if @config['slave'] -%>
+SLAVE=<%= @config['slave'] %>
+<% end -%>
+<% if @config['bonding_master'] -%>
+BONDING_MASTER=<%= @config['bonding_master'] %>
+<% end -%>
+<% if @config['bonding_opts'] -%>
+BONDING_OPTS=<%= @config['bonding_opts'] %>
+<% end -%>
+<% if @config['bonding_slave_0'] -%>
+BONDING_SLAVE_0=<%= @config['bonding_slave_0'] %>
+<% end -%>
+<% if @config['bonding_slave_1'] -%>
+BONDING_SLAVE_0=<%= @config['bonding_slave_1'] %>
+<% end -%>
+<% if @config['userctl'] -%>
+USERCTL=<%= @config['userctl'] %>
+<% elsif @config['usercontrol'] -%>
+USERCTL=<%= @config['usercontrol'] %>
+<% end -%>
+<% if @config['vlan'] -%>
+VLAN=<%= @config['vlan'] %>
+<% end -%>
+<% if @config['vlan_name_type'] -%>
+VLAN_NAME_TYPE=<%= @config['vlan_name_type'] %>
+<% end -%>
+<% if @config['uuid'] -%>
+UUID=<%= @config['uuid'] %>
+<% end -%>
+<% if @config['delay'] -%>
+DELAY=<%= @config['delay'] %>
+<% end -%>
+NM_CONTROLLED=no

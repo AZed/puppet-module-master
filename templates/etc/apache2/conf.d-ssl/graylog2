@@ -1,0 +1,9 @@
+Alias /internal/logs /opt/local/logging/graylog2-web-interface/public
+
+RailsBaseURI /internal/monitoring/logs
+<Location /internal/monitoring/logs>
+    PassengerResolveSymlinksInDocumentRoot on
+    Order allow,deny
+    Allow from all
+    Options -MultiViews
+</Location>

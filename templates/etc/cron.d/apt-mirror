@@ -1,0 +1,5 @@
+#
+# Regular cron jobs for the apt-mirror package
+#
+0 6	* * *	apt-mirror	umask 022 && /usr/bin/apt-mirror > /var/spool/apt-mirror/var/cron.log
+0 8	* * *	apt-mirror	umask 022 && /var/spool/apt-mirror/var/clean.sh >> /var/spool/apt-mirror/var/cron.log

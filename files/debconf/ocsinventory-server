@@ -1,0 +1,2 @@
+ocsinventory-server	ocsinventory-server/mysql/admin-user	string	debian-sys-maint
+ocsinventory-server	ocsinventory-server/dbconfig-install	boolean	false

@@ -1,0 +1,7 @@
+#
+# Puppet-generated PCRE destinations - do not modify directly
+#
+
+<% @params['pcre_destination'].each do |dest| -%>
+/^<%= dest %>$/	ACCEPT
+<% end -%>

@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# Git equivalent of 'hg outgoing'
+#
+# Requires that 'git fetch --all' be run first to update the remote
+# information
+#
+
+source /usr/local/etc/shell/git_functions.sh
+gitreview o "$@"

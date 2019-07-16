@@ -1,0 +1,11 @@
+
+module blkid-selinux 1.2;
+
+require {
+	type fsadm_t;
+	type etc_t;
+	class file { write link unlink };
+}
+
+#============= fsadm_t ==============
+allow fsadm_t etc_t:file { write link unlink};

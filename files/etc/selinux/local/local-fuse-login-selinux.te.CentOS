@@ -1,0 +1,10 @@
+module local-fuse-login-selinux 1.0;
+
+require {
+        type local_login_t;
+        type fusefs_t;
+        class dir { search getattr };
+}
+
+#============= local_login_t ==============
+allow local_login_t fusefs_t:dir { search getattr };

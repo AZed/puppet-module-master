@@ -1,0 +1,3 @@
+# Ensure the apache2 process is running
+CheckProcess "apache2" 1:100
+

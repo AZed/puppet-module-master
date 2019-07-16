@@ -1,0 +1,5 @@
+/dev
+/lost+found
+/proc
+/sys
+/var/cache/duplicity

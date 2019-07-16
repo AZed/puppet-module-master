@@ -1,0 +1,2 @@
+/var/lib/ntop/rrd/interfaces/.*/.*\.rrd VarFile
+/var/lib/ntop/topTalkers.db VarFile

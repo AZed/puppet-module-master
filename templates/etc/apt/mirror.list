@@ -1,0 +1,44 @@
+############# config ##################
+#
+set base_path    <%= @aptmirror_basedir %>
+#
+# if you change the base path you must create the directories below with write privileges
+#
+# set mirror_path  $base_path/mirror
+# set skel_path    $base_path/skel
+# set var_path     $base_path/var
+# set cleanscript $var_path/clean.sh
+# set defaultarch  <running host architecture>
+set nthreads     20
+set _tilde 0
+#
+############# end config ##############
+
+<% if @mirror_archive -%>
+<%   @mirror_archive.each do |release| -%>
+<%     @mirror_arch.each do |arch| -%>
+deb-<%= arch %> http://archive.debian.org/debian <%= release %> main<%= @nonfree_component %>
+<%     end -%>
+<%   end -%>
+<% end -%>
+<% if @mirror_lts -%>
+<%   @mirror_lts.each do |release| -%>
+<%     @mirror_arch.each do |arch| -%>
+deb-<%= arch %> http://http.us.debian.org/debian <%= release %>-lts main<%= @nonfree_component %>
+<%     end -%>
+<%   end -%>
+<% end -%>
+<% @mirror_release.each do |release| -%>
+<%   @mirror_arch.each do |arch| -%>
+deb-<%= arch %> http://http.us.debian.org/debian <%= release %> main<%= @installer_component %><%= @nonfree_component %>
+deb-<%= arch %> http://security.debian.org/debian-security <%= release %>/updates main<%= @nonfree_component %>
+<%   end -%>
+<%   if @mirror_src -%>
+deb-src http://http.us.debian.org/debian <%= release %> main<%= @nonfree_component %>
+deb-src http://security.debian.org/debian-security <%= release %>/updates main<%= @nonfree_component %>
+<%   end -%>
+
+<% end -%>
+clean http://http.us.debian.org/debian
+clean http://security.debian.org
+clean http://security.debian.org/debian-security

@@ -1,0 +1,180 @@
+#!/bin/sh
+#
+# Git hook for automatic actions after a change
+#
+# Copyright 2013-2017 Zed Pobre <zed@resonant.org>
+# Licensed to the public under the terms of the GNU GPL v2
+#
+# Install this file as:
+#   .git/hooks/post-commit
+#   .git/hooks/post-receive
+#   .git/hooks/post-merge
+# depending on which actions should potentially trigger this.  If
+# triggering on multiple actions, using symlinks is recommended over
+# just copying this file three times.
+#
+#
+####################################
+### Automatic Checkouts/Cleanups ###
+####################################
+#
+# This causes the worktree (working directory) to be automatically
+# updated by checking out the new HEAD after receiving a change.  This
+# requires the hook be set as post-receive.
+#
+# Configure the repository with:
+#   git config auto.checkout true
+#   git config receive.denyCurrentBranch ignore
+#
+# By default, this will overwrite locally modified files, but will not
+# remove untracked files.  To remove untracked files after a change,
+# configure the repository with:
+#   git config auto.clean true
+#
+# To futher purge the environment, removing untracked directories and
+# ignored files as well as just untracked files (e.g. because you are
+# trying to ensure that two environments are identical), instead
+# configure the repository with:
+#   git config auto.clean all
+#
+# If you want to force a permissions change after a merge
+# (e.g. because you can't easily control or don't want to worry about
+# an incorrectly set umask), configure the repository with:
+#   git config auto.chmod <perm>
+# where <perm> will be inserted into a chmod -R <perm>, e.g.:
+#   git config auto.chmod g+rwX
+#
+# If you have configured a detached working tree on a semi-bare
+# repository (/path/to/repository.git naming rather than
+# /path/to/repository/.git) with:
+#   git config core.worktree /path/to/working/tree
+# then this will be used, otherwise the working tree is assumed to be
+# '..' (i.e. the directory above the .git directory, which is correct
+# for the default creation of non-bare repositories).  Setting
+# core.worktree in a normal non-bare environment will break this hook.
+#
+#
+############################
+### Automatic Mirroring ####
+############################
+#
+# Configure the repository with:
+#   git config auto.mirrors 'remotename1 remotename2 [...]'
+#
+# This presupposes that the remotes already exist and are correctly
+# configured.  If the command 'gitssh' is in the default path, then it
+# will be used via the GIT_SSH environment variable.
+#
+#
+#######################################
+### Automatic Notification by Email ###
+#######################################
+#
+# Configure an array of addresses in the repository with:
+#   git config --add auto.email 'First Last <address@domain>'
+#   git config --add auto.email 'Other Name <otheraddess@otherdomain>'
+# or
+#   git config --add auto.email 'address@domain'
+#
+# Don't use quotes inside the addresses themselves (e.g. the "Last,
+# First MI." <address@domain> format will likely break this.
+#
+
+### Automatic Checkouts/Cleanups
+
+autocheckout=$(git config auto.checkout)
+autoclean=$(git config auto.clean)
+autochmod=$(git config auto.chmod)
+bare=$(git config core.bare)
+
+# The worktree variable is also used by notification
+worktree=$(git config core.worktree)
+if [ ! "${worktree}" ] ; then
+    # We are not in a semi-bare repository with a detached working tree
+    #
+    # If we're not in a bare repository, we need to set the working
+    # tree to be one level above the git directory, which we might or
+    # might not be in depending on whether we're local or remote.
+
+    if [ $bare = "false" ] ; then
+        worktree="$GIT_DIR/.."
+    fi
+fi
+# Enforce existence of the worktree from this point forwards:
+worktree=$(readlink -e $worktree)
+
+case $autocheckout in
+true)
+    if [ ! "${worktree}" ] ; then
+        echo "ERROR: unable to find working tree for autocheckout"
+        exit 11
+    fi
+    echo "Updating working directory ${worktree} ..."
+    env -i git --git-dir=$GIT_DIR --work-tree=$worktree checkout -f
+    ;;
+esac
+
+case $autoclean in
+true)
+    if [ ! "${worktree}" ] ; then
+        echo "ERROR: unable to find working tree for autoclean"
+        exit 12
+    fi
+    echo "Removing untracked files under ${worktree} ..."
+    env -i git --git-dir=$GIT_DIR --work-tree=$worktree clean -f
+    ;;
+all)
+    echo "Purging untracked and ignored files and directories under ${worktree} ..."
+    env -i git --git-dir=$GIT_DIR --work-tree=$worktree clean -f -d -x
+    ;;
+esac
+
+if [ $autochmod ] ; then
+    if [ ! "${worktree}" ] ; then
+        echo "ERROR: unable to find working tree for autochmod"
+        exit 13
+    fi
+    echo "Setting permission '${autochmod}' on ${worktree} ..."
+    env -i chmod -R $autochmod $worktree
+fi
+
+
+### Automatic Mirroring
+
+mirrors=$(git config auto.mirrors)
+if [ "${mirrors}" ] ; then
+    for mirror in $mirrors ; do
+        echo "Automatic mirror update to ${mirror} ..."
+        gitssh=$(command -v gitssh)
+        if [ "${gitssh}" ] ; then
+            env -i GIT_SSH=$gitssh git push -f -q $mirror
+        else
+            env -i git push -f -q $mirror
+        fi
+    done
+fi
+
+
+### Automatic E-mail Notification
+
+email=$(git config --get-all auto.email)
+hostname=$(hostname)
+
+if [ "${email}" ] ; then
+    while read oldrev newrev refname ; do
+        pushed=1
+        branch=$(basename $refname)
+        subject="changes to ${worktree} on ${hostname} (branch ${branch})"
+        echo "Sending e-mail notifications for ${refname} ..."
+        git config --get-all auto.email | while read address ; do
+            env -i git log --date=iso --graph --stat $oldrev..$newrev | /usr/bin/mail -s "${subject}" "${address}"
+        done
+    done
+    if [ ! $pushed ] ; then
+        echo "Sending e-mail notifications ..."
+        subject="changes to ${worktree} on ${hostname}"
+        git config  --get-all auto.email | while read address ; do
+            env -i git log --date=iso --graph --stat ORIG_HEAD..HEAD | /usr/bin/mail -s "${subject}" "${address}"
+        done
+    fi
+fi

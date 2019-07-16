@@ -1,0 +1,11 @@
+
+module setsebool-useradd 1.0;
+
+require {
+	type shadow_t;
+	type setsebool_t;
+	class file { read getattr open };
+}
+
+#============= setsebool_t ==============
+allow setsebool_t shadow_t:file { read getattr open };

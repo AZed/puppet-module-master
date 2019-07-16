@@ -1,0 +1,1 @@
+IPMIEVD_OPTIONS="open daemon pidfile=/var/run/ipmievd.pid"

@@ -1,0 +1,16 @@
+
+module system_mail-dead_letter 1.0;
+
+require {
+	type admin_home_t;
+	type system_mail_t;
+	class file { create open };
+	class dir { write add_name };
+}
+
+#============= system_mail_t ==============
+#!!!! The source type 'system_mail_t' can write to a 'dir' of the following types:
+# var_log_t, mail_spool_t, etc_aliases_t, mail_home_rw_t, sendmail_log_t, system_mail_tmp_t, courier_spool_t, postfix_etc_t, exim_log_t, mqueue_spool_t, exim_spool_t, mail_spool_t, qmail_spool_t, etc_t, tmp_t, courier_spool_t, mqueue_spool_t, mail_home_rw_t, uucpd_spool_t
+
+allow system_mail_t admin_home_t:dir { write add_name };
+allow system_mail_t admin_home_t:file { create open };

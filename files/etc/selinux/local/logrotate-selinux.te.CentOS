@@ -1,0 +1,21 @@
+
+module logrotate-selinux 1.3;
+
+require {
+	type var_run_t;
+	type logrotate_t;
+        type var_t;
+        type initrc_t;
+        type bin_t;
+	class sock_file write;
+        class file { read execmod };
+        class unix_stream_socket connectto;
+        class fd use;
+}
+
+#============= logrotate_t ==============
+allow logrotate_t var_run_t:sock_file write;
+allow logrotate_t initrc_t:unix_stream_socket connectto;
+allow logrotate_t initrc_t:fd use;
+allow logrotate_t bin_t:file execmod;
+allow logrotate_t var_t:file read;

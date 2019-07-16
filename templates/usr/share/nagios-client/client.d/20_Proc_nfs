@@ -1,0 +1,7 @@
+
+CheckLocalProcs "rpc.mountd" 1:1
+CheckLocalProcs "rpc.statd" 1:1
+CheckLocalProcs "nfsd" 1:10
+CheckLocalProcs "lockd" 1:10
+CheckLocalProcs "portmap" 1:1
+

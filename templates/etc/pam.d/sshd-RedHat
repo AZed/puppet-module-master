@@ -1,0 +1,38 @@
+#%PAM-1.0
+
+<% if @sshd_deny_root or @sshd_deny_users or @sshd_deny_users_templates -%>
+# Use pam_listfile to deny users specified in /etc/ssh/deny.users
+auth requisite pam_listfile.so item=user sense=deny file=/etc/ssh/deny.users onerr=succeed
+
+<% end -%>
+<% if @sshd_succeed_if -%>
+<%   if @sshd_succeed_if.respond_to?('each') -%>
+<%     @sshd_succeed_if.each do |args| -%>
+auth requisite pam_succeed_if.so <%= args %>
+<%     end -%>
+<%   else -%>
+auth requisite pam_succeed_if.so <%= @sshd_succeed_if %>
+<%   end -%>
+
+<% end -%>
+<% if @radius.respond_to?('[]') and @radius['sshd'] and @radius['shared_secret'] -%>
+<%   if @radius['prompt'] -%>
+# Require SecurID authentication (prompt requires >= v1.4)
+auth requisite pam_radius_auth.so prompt=<%= @radius['prompt'] %>
+
+<%   else -%>
+# Require SecurID authentication
+auth requisite pam_radius_auth.so
+
+<%   end -%>
+<% end -%>
+auth       include      system-auth
+account    required     pam_nologin.so
+account    include      system-auth
+password   include      system-auth
+session    optional     pam_keyinit.so force revoke
+<% if @script.respond_to?('[]') and @script['sshd'] -%>
+session    required     pam_script.so dir=<%= @script['sshd'] %>
+<% end -%>
+session    include      system-auth
+session    required     pam_loginuid.so

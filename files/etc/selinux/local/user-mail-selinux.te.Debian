@@ -1,0 +1,16 @@
+module user-mail-selinux 1.0;
+
+require {
+        type var_run_t;
+        type user_mail_t;
+        class sock_file { write };
+        type sysctl_crypto_t;
+        type random_device_t;
+        class dir search;
+        class chr_file { read };
+}
+
+#============= user_mail_t ==============
+allow user_mail_t random_device_t:chr_file read;
+allow user_mail_t sysctl_crypto_t:dir search;
+allow user_mail_t var_run_t:sock_file write;

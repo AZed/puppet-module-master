@@ -1,0 +1,182 @@
+[sssd]
+config_file_version = 2
+<% if @full_name_format -%>
+full_name_format = <%= @full_name_format %>
+<% end -%>
+<% if @re_expression -%>
+re_expression = <%= @re_expression %>
+<% end -%>
+reconnection_retries = <%= @reconnection_retries %>
+<% if @services.respond_to?('join') -%>
+services = <%= @services.join(', ') %>
+<% else -%>
+services = <%= @services %>
+<% end -%>
+<% if @domains_enabled.respond_to?('join') -%>
+domains = <%= @domains_enabled.join(', ') %>
+<% else -%>
+domains = <%= @domains_enabled %>
+<% end -%>
+
+[nss]
+<% @nss.each do |param, value| -%>
+<%   if value.respond_to?('join') -%>
+<%= param %> = <%= value.join(', ') %>
+<%   else -%>
+<%= param %> = <%= value %>
+<%   end -%>
+<% end -%>
+
+[pam]
+<% @pam.each do |param, value| -%>
+<%   if value.respond_to?('join') -%>
+<%= param %> = <%= value.join(', ') %>
+<%   else -%>
+<%= param %> = <%= value %>
+<%   end -%>
+<% end -%>
+
+<% @domains.each do |domain| -%>
+[domain/<%= domain['name'] %>]
+<%   if domain['id_provider'] -%>
+id_provider = <%= domain['id_provider'] %>
+<%   else -%>
+id_provider = ldap
+<%   end -%>
+<%   if domain['access_provider'] -%>
+access_provider = <%= domain['access_provider'] %>
+<%   else -%>
+access_provider = permit
+<%   end -%>
+<%   if domain['auth_provider'] -%>
+auth_provider = <%= domain['auth_provider'] %>
+<%   else -%>
+auth_provider = ldap
+<%   end -%>
+<%   if domain['chpass_provider'] -%>
+chpass_provider = <%= domain['chpass_provider'] %>
+<%   else -%>
+chpass_provider = ldap
+<%   end -%>
+<%   if domain['sudo_provider'] -%>
+sudo_provider = <%= domain['sudo_provider'] %>
+<%   else -%>
+sudo_provider = none
+<%   end -%>
+<%   if domain['krb5_server'] -%>
+krb5_server = <%= domain['krb5_server'] %>
+<%   end -%>
+<%   if domain['krb5_realm'] -%>
+krb5_realm = <%= domain['krb5_realm'] %>
+<%   end -%>
+# ldap_schema can be set to "rfc2307", which stores group member names in the
+# "memberuid" attribute, or to "rfc2307bis", which stores group member DNs in
+# the "member" attribute. If you do not know this value, ask your LDAP
+# administrator.
+<%   if domain['ldap_schema'] -%>
+ldap_schema = <%= domain['ldap_schema'] %>
+<%   else -%>
+ldap_schema = rfc2307
+<%   end -%>
+<%   if domain['ldap_sasl_mech'] -%>
+ldap_sasl_mech = <%= domain['ldap_sasl_mech'] %>
+<%   end -%>
+<%   if domain['ldap_uri'] -%>
+ldap_uri = <%= domain['ldap_uri'] %>
+<%   else -%>
+ldap_uri = <%= @ldap_uri_default %>
+<%   end -%>
+<%   if domain['ldap_search_base'] -%>
+ldap_search_base = <%= domain['ldap_search_base'] %>
+<%   else -%>
+ldap_search_base = <%= @ldap_base_default %>?subtree?
+<%   end -%>
+<%   if domain['ldap_access_filter'] -%>
+ldap_access_filter = <%= domain['ldap_access_filter'] %>
+<%   else -%>
+ldap_access_filter = (objectClass=posixAccount)
+<%   end -%>
+<%   if domain['ldap_access_order'] -%>
+ldap_access_order = <%= domain['ldap_access_order'] %>
+<%   end -%>
+<%   if domain['ldap_tls_reqcert'] -%>
+ldap_tls_reqcert = <%= domain['ldap_tls_reqcert'] %>
+<%   else -%>
+ldap_tls_reqcert = <%= @ldap_reqcert_default %>
+<%   end -%>
+<%   if domain['ldap_tls_cacert'] -%>
+ldap_tls_cacert = <%= domain['ldap_tls_cacert'] %>
+<%   else -%>
+ldap_tls_cacert = <%= @ldap_cacert_default %>
+<%   end -%>
+<%   if domain['ldap_tls_cipher_suite'] -%>
+ldap_tls_cipher_suite = <%= domain['ldap_tls_cipher_suite'] %>
+<%   elsif @ldap_tls_cipher_suite_default -%>
+ldap_tls_cipher_suite = <%= @ldap_tls_cipher_suite_default %>
+<%   end -%>
+<%   if domain['ldap_user_authorized_host'] -%>
+ldap_user_authorized_host = <%= domain['ldap_user_authorized_host'] %>
+<%   end -%>
+<%   if domain['ldap_user_authorized_service'] -%>
+ldap_user_authorized_service = <%= domain['ldap_user_authorized_service'] %>
+<%   end -%>
+<%   if domain['ldap_user_object_class'] -%>
+ldap_user_object_class = <%= domain['ldap_user_object_class'] %>
+<%   end -%>
+<%   if domain['ldap_group_object_class'] -%>
+ldap_group_object_class = <%= domain['ldap_group_object_class'] %>
+<%   end -%>
+<%   if domain['ldap_user_home_directory'] -%>
+ldap_user_home_directory = <%= domain['ldap_user_home_directory'] %>
+<%   end -%>
+<%   if domain['ldap_user_principal'] -%>
+ldap_user_principal = <%= domain['ldap_user_principal'] %>
+<%   end -%>
+<%   if domain['ldap_account_expire_policy'] -%>
+ldap_account_expire_policy = <%= domain['ldap_account_expire_policy'] -%>
+<%   end -%>
+<%   if domain['ldap_force_upper_case_realm'] -%>
+ldap_force_upper_case_realm = true
+<%   end -%>
+# Note that enabling enumeration will have a moderate performance impact.
+# Consequently, the default value for enumeration is FALSE.
+# Refer to the sssd.conf man page for full details.
+<%   if domain['enumerate'] -%>
+enumerate = true
+<%   else -%>
+# enumerate = false
+<%   end -%>
+# Allow offline logins by locally storing password hashes (default: false).
+<%   if domain['cache_credentials'] -%>
+cache_credentials = true
+<%   else -%>
+#cache_credentials = true
+<%   end -%>
+<%   if domain['account_cache_expiration'] -%>
+account_cache_expiration = <%= domain['account_cache_expiration'] %>
+<%   end -%>
+<%   if domain['entry_cache_timeout'] -%>
+entry_cache_timeout = <%= domain['entry_cache_timeout'] %>
+<%   end -%>
+<%   if domain['entry_cache_user_timeout'] -%>
+entry_cache_timeout = <%= domain['entry_cache_user_timeout'] %>
+<%   end -%>
+<%   if domain['entry_cache_group_timeout'] -%>
+entry_cache_timeout = <%= domain['entry_cache_group_timeout'] %>
+<%   end -%>
+<%   if domain['entry_cache_netgroup_timeout'] -%>
+entry_cache_timeout = <%= domain['entry_cache_netgroup_timeout'] %>
+<%   end -%>
+<%   if domain['entry_cache_service_timeout'] -%>
+entry_cache_timeout = <%= domain['entry_cache_service_timeout'] %>
+<%   end -%>
+<%   if domain['entry_cache_sudo_timeout'] -%>
+entry_cache_timeout = <%= domain['entry_cache_sudo_timeout'] %>
+<%   end -%>
+<%   if domain['entry_cache_autofs_timeout'] -%>
+entry_cache_timeout = <%= domain['entry_cache_autofs_timeout'] %>
+<%   end -%>
+<%   if domain['entry_cache_ssh_host_timeout'] -%>
+entry_cache_timeout = <%= domain['entry_cache_ssh_host_timeout'] %>
+<%   end -%>
+<% end -%>

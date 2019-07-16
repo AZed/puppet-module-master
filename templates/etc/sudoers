@@ -1,0 +1,102 @@
+# /etc/sudoers
+#
+# THIS FILE IS MANAGED BY PUPPET -- DO NOT EDIT BY HAND
+#
+
+<% if @env_reset -%>
+Defaults	env_reset
+Defaults	env_keep = "<%= @env_keep %>"
+
+<% end -%>
+<% if @includedirs -%>
+<%   @includedirs.each do |dir| -%>
+#includedir <%= dir %>
+
+
+<%   end -%>
+<% end -%>
+<% if @root_group -%>
+# Allow members of group <%= @root_group %> to execute any command
+%<%= @root_group %>	ALL=(ALL:ALL) ALL
+
+<% end -%>
+<% if @root_users and @root_users.any? -%>
+# Allow the following users to execute any command
+<%   @root_users.each do |user| -%>
+<%= user %>	ALL=(ALL:ALL) ALL
+<%   end -%>
+
+<% end -%>
+<% if @host_alias_templates or @host_alias_lines -%>
+# Host alias specification
+<%   if @host_alias_templates -%>
+<%     @host_alias_templates.each do |template| -%>
+<%= scope.function_template_v3(["#{template}"]) -%>
+<%     end -%>
+<%   end -%>
+<%   if @host_alias_lines -%>
+<%     @host_alias_lines.each do |line| -%>
+<%= line %>
+<%     end -%>
+<%   end -%>
+
+
+<% end -%>
+<% if @user_alias_templates or @user_alias_lines -%>
+# User alias specification
+<%   if @user_alias_templates -%>
+<%     @user_alias_templates.each do |template| -%>
+<%= scope.function_template_v3(["#{template}"]) -%>
+<%     end -%>
+<%   end -%>
+<%   if @user_alias_lines -%>
+<%     @user_alias_lines.each do |line| -%>
+<%= line %>
+<%     end -%>
+<%   end -%>
+
+
+<% end -%>
+<% if @cmnd_alias_templates or @cmnd_alias_lines -%>
+# Cmnd alias specification
+<%   if @cmnd_alias_templates -%>
+<%     @cmnd_alias_templates.each do |template| -%>
+<%= scope.function_template_v3(["#{template}"]) -%>
+<%     end -%>
+<%   end -%>
+<%   if @cmnd_alias_lines -%>
+<%     @cmnd_alias_lines.each do |line| -%>
+<%= line %>
+<%     end -%>
+<%   end -%>
+
+
+<% end -%>
+<% if @user_priv_templates or @user_priv_lines -%>
+# User privilege specification
+<%   if @user_priv_templates -%>
+<%     @user_priv_templates.each do |template| -%>
+<%= scope.function_template_v3(["#{template}"]) -%>
+<%     end -%>
+<%   end -%>
+<%   if @user_priv_lines -%>
+<%     @user_priv_lines.each do |line| -%>
+<%= line %>
+<%     end -%>
+<%   end -%>
+
+
+<% end -%>
+<% if @final_templates or @final_lines -%>
+# Final Entries
+<%   if @final_templates -%>
+<%     @final_templates.each do |template| -%>
+<%= scope.function_template_v3(["#{template}"]) -%>
+<%     end -%>
+<%   end -%>
+<%   if @final_lines -%>
+<%     @final_lines.each do |line| -%>
+<%= line %>
+<%     end -%>
+<%   end -%>
+<% end -%>

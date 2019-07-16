@@ -1,0 +1,15 @@
+
+module sshd_mkhomedir 1.0;
+
+require {
+	type home_root_t;
+	type sshd_t;
+	type local_login_t;
+	class dir create;
+}
+
+#============= sshd_t ==============
+allow sshd_t home_root_t:dir create;
+
+############# local_login_t ########
+allow local_login_t home_root_t:dir create;

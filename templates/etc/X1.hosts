@@ -1,0 +1,5 @@
+<% if @x1hosts -%>
+<%   @x1hosts.each do |host| -%>
+<%= host %>
+<%   end -%>
+<% end -%>

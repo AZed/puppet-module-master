@@ -1,0 +1,13 @@
+## Path:        Network/Remote access/SSH
+## Description: SSH server settings
+## Type:        string
+## Default:     ""
+## ServiceRestart: sshd
+#
+# Options for sshd
+#
+<% if @config['SSHD_OPTS'] -%>
+SSHD_OPTS="<%= @config['SSHD_OPTS'] %>"
+<% else -%>
+SSHD_OPTS=""
+<% end -%>

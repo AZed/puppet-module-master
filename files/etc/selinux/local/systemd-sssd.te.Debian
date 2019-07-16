@@ -1,0 +1,12 @@
+module systemd-sssd 1.0;
+
+require {
+        type systemd_logind_t;
+	type sssd_public_t;
+	class dir search;
+	class file { getattr open read };
+}
+
+#============= systemd_logind_t ==============
+allow systemd_logind_t sssd_public_t:dir search;
+allow systemd_logind_t sssd_public_t:file { getattr open read };

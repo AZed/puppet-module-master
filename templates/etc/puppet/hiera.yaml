@@ -1,0 +1,17 @@
+---
+:backends:
+  - yaml
+:yaml:
+  :datadir: "<%= @hiera_datadir %>"
+:hierarchy:
+  - "%{::domain}/%{::hostname}"
+  - "%{hierarchy}/%{role}"
+  - "%{hierarchy}/common"
+<% if @hierarchy_templates -%>
+<%   @hierarchy_templates.each do |template| -%>
+<%= scope.function_template(["#{template}"]) -%>
+<%   end -%>
+<% end -%>
+  - "%{::domain}/common"
+  - "class/%{calling_class}"
+  - common

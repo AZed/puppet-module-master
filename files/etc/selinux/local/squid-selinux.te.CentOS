@@ -1,0 +1,25 @@
+
+module squid-selinux 1.5;
+
+require {
+	type squid_t;
+	type var_run_t;
+	type user_tmp_t;
+	type nscd_var_run_t;
+	type unconfined_t;
+	type initrc_t;
+	class sock_file write;
+	class unix_stream_socket connectto;
+        class dir { add_name getattr remove_name write search };
+        class file { create getattr open read unlink write append };
+
+}
+
+#============= squid_t ==============
+allow squid_t unconfined_t:unix_stream_socket connectto;
+allow squid_t initrc_t:unix_stream_socket connectto;
+allow squid_t var_run_t:sock_file write;
+allow squid_t nscd_var_run_t:file read;
+allow squid_t user_tmp_t:dir { search add_name remove_name write };
+allow squid_t user_tmp_t:file { create unlink write };
+allow squid_t var_run_t:file { getattr open read append };

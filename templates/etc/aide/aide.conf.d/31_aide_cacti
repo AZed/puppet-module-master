@@ -1,0 +1,15 @@
+/var/lib/mysql/cacti            VarDir
+/var/lib/mysql/cacti/.*\.MYD    VarFile
+/var/lib/mysql/cacti/.*\.MYI    VarFile
+/var/lib/mysql/cacti/.*\.CSM    VarFile
+/var/lib/mysql/cacti/.*\.frm    VarFile
+/var/log/cacti/cacti.log        Log
+!/var/log/cacti/cacti.log.[0-9]+.gz
+/var/log/cacti/poller-error.log LowLog
+/var/lib/cacti/rra/.*\.rrd      VarFile
+/var/lib/cacti/rra/.*/.*\.rrd   VarFile
+/var/lib/cacti/weathermap           VarDir
+/var/lib/cacti/weathermap/.*\.html  VarFile
+/var/lib/cacti/weathermap/.*\.png   VarFile
+/usr/share/cacti/site/plugins/weathermap                    VarDir
+/usr/share/cacti/site/plugins/weathermap/configs/.*\.conf   VarFile

@@ -1,0 +1,25 @@
+[Unit]
+Description=OpenSSH server daemon (port <%= @port %>)
+Documentation=man:sshd(8) man:sshd_config(5)
+After=network.target sshd-keygen.service sshd.service
+Wants=sshd-keygen.service
+
+[Service]
+Type=notify
+<% if @config['PidFile'] -%>
+PIDFile=<%= @config['PidFile'] %>
+<% elsif @port == '22' -%>
+PIDFile=/var/run/sshd.pid
+<% else -%>
+PIDFile=/var/run/sshd-<%= @port %>.pid
+<% end -%>
+EnvironmentFile=/etc/ssh/alt/<%= @port %>/sysconfig
+ExecStart=/etc/ssh/alt/<%= @port %>/sbin/<%= @sshd_execname %> -D -f /etc/ssh/alt/<%= @port %>/sshd_config $OPTIONS
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+RestartSec=42s
+
+[Install]
+WantedBy=multi-user.target
+Alias=ssh-<%= @port %>.service

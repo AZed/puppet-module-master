@@ -1,0 +1,6 @@
+<% if @hosts_templates -%>
+<%   @hosts_templates.each do |template| -%>
+<%= scope.function_template(["#{template}"]) -%>
+
+<%   end -%>
+<% end -%>

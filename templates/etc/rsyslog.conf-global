@@ -1,0 +1,161 @@
+#################
+#### MODULES ####
+#################
+
+<% if @module_impstats -%>
+<%   if @legacy -%>
+$ModLoad impstats       # periodic output of rsyslog internal counters
+<%     if @module_impstats_config['interval'] -%>
+$PStatInterval <%= @module_impstats_config['interval'] %>
+<%     end -%>
+<%     if @module_impstats_config['facility'] -%>
+$PStatFacility <%= @module_impstats_config['facility'] %>
+<%     end -%>
+<%     if @module_impstats_config['severity'] -%>
+$PStatSeverity <%= @module_impstats_config['severity'] %>
+<%     end -%>
+<%   else -%>
+module(load="impstats"  # periodic output of rsyslog internal counters
+<%     if @module_impstats_config['interval'] -%>
+       interval="<%= @module_impstats_config['interval'] %>"
+<%     end -%>
+<%     if @module_impstats_config['facility'] -%>
+       facility="<%= @module_impstats_config['facility'] %>"
+<%     end -%>
+<%     if @module_impstats_config['severity'] -%>
+       severity="<%= @module_impstats_config['severity'] %>"
+<%     end -%>
+<%     if @module_impstats_config['bracketing'] -%>
+       bracketing="<%= @module_impstats_config['bracketing'] %>"
+<%     end -%>
+<%     if @module_impstats_config['format'] -%>
+       format="<%= @module_impstats_config['format'] %>"
+<%     end -%>
+<%     if @module_impstats_config['log_file'] -%>
+       log.file="<%= @module_impstats_config['log_file'] %>"
+<%     end -%>
+<%     if @module_impstats_config['log_syslog'] -%>
+       log.syslog="<%= @module_impstats_config['log_syslog'] %>"
+<%     end -%>
+<%     if @module_impstats_config['resetcounters'] -%>
+       resetCounters="<%= @module_impstats_config['resetcounters'] %>"
+<%     end -%>
+<%     if @module_impstats_config['ruleset'] -%>
+       Ruleset="<%= @module_impstats_config['ruleset'] %>"
+<%     end -%>)
+<%   end -%>
+<% end -%>
+<% if @module_imfile -%>
+<%   if @legacy -%>
+$ModLoad imfile         # provides support for text file input
+<%   else -%>
+module(load="imfile" mode="<%= @module_imfile_mode %>") # text file input
+<%   end -%>
+<% end -%>
+<% if @legacy -%>
+$ModLoad imuxsock       # provides support for local system logging
+<% else -%>
+module(load="imuxsock") # provides support for local system logging
+<% end -%>
+<% if @module_imjournal -%>
+<%   if @legacy -%>
+$ModLoad imjournal      # provides access to the systemd journal
+<%   else -%>
+module(load="imjournal") # provides access to the systemd journal
+<%   end -%>
+<% end -%>
+<% if @module_imklog -%>
+<%   if @legacy -%>
+$ModLoad imklog         # provides kernel logging support
+<%   else -%>
+module(load="imklog")   # provides kernel logging support
+<%   end -%>
+<% end -%>
+<% if @module_immark -%>
+<%   if @legacy -%>
+$ModLoad immark         # provides --MARK-- message capability
+<%   else -%>
+module(load="immark")   # provides --MARK-- message capability
+<%   end -%>
+<% end -%>
+<% if @module_omrelp -%>
+module(load="omrelp")   # provides support for sending RELP logs
+<% end -%>
+<% if @module_imrelp -%>
+
+# provides RELP syslog reception
+module(load="imrelp")
+input(type="imrelp" port="<%= @module_imrelp_port %>" ssl="<%= @module_imrelp_ssl %>")
+<% end -%>
+<% if @module_imudp -%>
+
+# provides UDP syslog reception
+<%   if @legacy -%>
+$ModLoad imudp
+$UDPServerRun <%= @module_imudp_port %>
+<%   else -%>
+module(load="imudp")
+input(type="imudp" port="<%= @module_imudp_port %>")
+<%   end -%>
+<% end -%>
+<% if @module_imtcp -%>
+
+# provides TCP syslog reception
+<%  if @legacy -%>
+$ModLoad imtcp
+$InputTCPServerRun <%= @module_imtcp_port %>
+<%  else -%>
+module(load="imtcp")
+input(type="imtcp" port="<%= @module_imtcp_port %>")
+<%  end -%>
+<% end -%>
+
+###########################
+#### GLOBAL DIRECTIVES ####
+###########################
+
+<% if @traditional_timestamps -%>
+#
+# Use traditional timestamp format.
+# To enable high precision timestamps, comment out the following line.
+#
+$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat
+
+<% end -%>
+#
+# Set the default permissions for all log files.
+#
+$FileOwner <%= @fileowner %>
+$FileGroup <%= @filegroup %>
+$FileCreateMode 0640
+$DirCreateMode 0755
+$Umask 0022
+
+<% if @maxmessagesize -%>
+# Some formats require larger message sizes. modsecurity and tomcat come to mind. 
+$MaxMessageSize <%= @maxmessagesize %>
+
+<% end -%>
+#
+# Where to place spool and state files
+#
+$WorkDirectory <%= @work_directory %>
+
+<% if $repeatedmsgreduction -%>
+# Condense repeated lines
+$RepeatedMsgReduction on
+
+<% end -%>
+<% if @filters.respond_to?('each') -%>
+#
+# Filters for all logging
+#
+<%   @filters.each do |line| -%>
+<%= line -%>
+<%   end -%>
+
+<% end -%>
+#
+# Include all config files in /etc/rsyslog.d/
+#
+$IncludeConfig /etc/rsyslog.d/*.conf

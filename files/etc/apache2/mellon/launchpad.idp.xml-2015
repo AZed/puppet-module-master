@@ -1,0 +1,21 @@
+<EntityDescriptor ID="SM431b4cf39592491ce11b3986235f604c97172f0cc" entityID="https://auth.launchpad.nasa.gov" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+    <IDPSSODescriptor WantAuthnRequestsSigned="false" ID="SM530779f458dc2f8e3a1a3659b1003ce26ae935daf76" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <KeyDescriptor use="signing">
+            <ns1:KeyInfo Id="SM175ead09e98e68197bbac8b286e414357de53d146db" xmlns:ns1="http://www.w3.org/2000/09/xmldsig#">
+                <ns1:X509Data>
+                    <ns1:X509IssuerSerial>
+                        <ns1:X509IssuerName>OU=NASA Operational CA,OU=Certification Authorities,OU=NASA,O=U.S. Government,C=US</ns1:X509IssuerName>
+                        <ns1:X509SerialNumber>1380510730</ns1:X509SerialNumber>
+                    </ns1:X509IssuerSerial>
+                    <ns1:X509Certificate>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</ns1:X509Certificate>
+                    <ns1:X509SubjectName>CN=idp.launchpad.nasa.gov,OU=Services,OU=NASA,O=U.S. Government,C=US</ns1:X509SubjectName>
+                </ns1:X509Data>
+            </ns1:KeyInfo>
+        </KeyDescriptor>
+        <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
+        <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+        <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</NameIDFormat>
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://auth.launchpad.nasa.gov/affwebservices/public/saml2sso"/>
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://auth.launchpad.nasa.gov/affwebservices/public/saml2sso"/>
+    </IDPSSODescriptor>
+</EntityDescriptor>

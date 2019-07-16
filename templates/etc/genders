@@ -1,0 +1,11 @@
+<% if @genders_templates -%>
+<%   @genders_templates.each do |template| -%>
+<%= scope.function_template(["#{template}"]) -%>
+
+<%   end -%>
+<% end -%>
+<% if @genders -%>
+<%   @genders.each do |line| -%>
+<%= line %>
+<%   end -%>
+<% end -%>

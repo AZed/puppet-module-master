@@ -1,0 +1,23 @@
+# If you just change the port or add more ports here, you will likely
+# also have to change the VirtualHost statement in
+# /etc/apache2/sites-enabled/000-default
+
+Listen 80
+NameVirtualHost *:80
+
+<IfModule mod_ssl.c>
+    # If you add NameVirtualHost *:443 here, you will also have to change
+    # the VirtualHost statement in /etc/apache2/sites-available/default-ssl
+    # to <VirtualHost *:443>
+    Listen 443
+<% if @sslvirtualhosts -%>
+    NameVirtualHost *:443
+<% end -%>
+</IfModule>
+
+<IfModule mod_gnutls.c>
+    Listen 443
+<% if @sslvirtualhosts -%>
+    NameVirtualHost *:443
+<% end -%>
+</IfModule>

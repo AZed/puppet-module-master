@@ -1,0 +1,4 @@
+# Check gluster volumes
+<% @nagios_gluster_volumes.each do |volume| -%>
+CheckGlusterVolume -V <%= volume %>
+<% end %>

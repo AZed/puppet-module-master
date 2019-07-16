@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# hg-puppettest
+#
+# Tests .pp puppet files to ensure that they at least have a minimally
+# correct syntax.
+#
+# This is intended to be run from a pretxncommit hook, e.g.:
+#
+# pretxncommit.puppettest = (hg stat -man --rev $HG_PARENT1:$HG_NODE --print0 | xargs -0 -L 1 /usr/local/bin/hg-puppettest) >&2
+
+BASENAME=`basename $1`
+TEMPFILE=`mktemp /tmp/$BASENAME-puppettest.XXXX` || exit 127
+EXT=`echo $1 | awk -F . '{print $NF}'`
+if [ $EXT = 'pp' ] ; then
+    hg cat --rev tip $1 > $TEMPFILE
+    # skip files with imports, since they can't be parsed individually
+    grep -q import $TEMPFILE && exit 0
+    puppet parser validate $TEMPFILE || exit 1
+fi
+rm $TEMPFILE

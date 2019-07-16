@@ -1,0 +1,19 @@
+#!/usr/bin/perl -Tw
+#
+# apache2_syslog - Simple perl script to pipe Apache logs
+#  into syslog.
+#
+# Usage:
+#   CustomLog |/usr/local/bin/apache2_syslog combined
+
+use strict;
+use warnings;
+use Sys::Syslog qw( :DEFAULT setlogsock );
+
+setlogsock("unix");
+openlog("apache2", "cons,pid", "daemon");
+
+while (my $log = <STDIN>) {
+  syslog("notice", $log);
+}
+closelog;

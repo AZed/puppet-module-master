@@ -1,0 +1,20 @@
+#
+# MySQL database server configuration file.
+# CIS Benchmark Settings
+
+[mysqld]
+# CIS Benchmark Settings
+# CIS: 6.2
+local-infile = 0
+# CIS: 6.3
+old-passwords = 0
+# CIS: 6.4
+#safe-show-database = 1 (deprecated)
+# CIS: 6.5
+secure-auth = 1
+# CIS: 6.6
+skip-grant-tables = 0
+# CIS: 6.9
+safe-user-create = 1
+# CIS: 6.10
+skip-symbolic-links = 1

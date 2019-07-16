@@ -1,0 +1,17 @@
+#%PAM-1.0
+#
+# Account-related modules common to all services
+# Using pam-config will cause this file to be overwritten.
+#
+# This file is included from other service-specific PAM config files,
+# and should contain a list of the accountorization modules that define
+# the central access policy for use on the system.  The default is to
+# only deny service to users whose accounts are expired.
+#
+account requisite       pam_unix2.so
+account sufficient      pam_localuser.so
+<% if @authmech == 'ldap' -%>
+account required        pam_ldap.so     use_first_pass
+<% elsif @authmech == 'sss' -%>
+account required        pam_sss.so      use_first_pass
+<% end -%>

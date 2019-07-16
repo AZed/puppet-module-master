@@ -1,0 +1,75 @@
+###############
+#### RULES ####
+###############
+
+#
+# First some standard log files.  Start with all logs to syslog, and
+# then log by facility.  Mail is handled separately below, so that
+# mail-specific filters can be inserted if needed.
+#
+*.*<% @unlogged_syslog.each do |line| -%>;\
+        <%= line %>.none<% end -%>      -/var/log/syslog
+
+<% if @facility_auth -%>
+auth,authpriv.*                 <%= @facility_auth %>
+<% end -%>
+<% if @facility_cron -%>
+cron.*                          <%= @facility_cron %>
+<% end -%>
+<% if @facility_daemon -%>
+daemon.*                        <%= @facility_daemon %>
+<% end -%>
+<% if @facility_kern -%>
+kern.*                          <%= @facility_kern %>
+<% end -%>
+<% if @facility_lpr -%>
+lpr.*                           <%= @facility_lpr %>
+<% end -%>
+<% if @facility_user -%>
+user.*                          <%= @facility_user %>
+<% end -%>
+
+#
+# Some "catch-all" log files.
+#
+*.=debug<% @unlogged_debug.each do |line| -%>;\
+    <%= line %>.none<% end -%>      -/var/log/debug
+*.=info;*.=notice;*.=warn<% @unlogged_messages.each do |line| -%>;\
+    <%= line %>.none<% end -%>      -/var/log/messages
+
+#
+# Emergencies are sent to everybody logged in.
+#
+*.emerg                         <%= @emerg %>
+
+<% if @filters_mail.respond_to?('each') -%>
+#
+# Filters for mail (and anything else beyond this point)
+#
+<%   @filters_mail.each do |line| -%>
+<%= line %>
+<%   end -%>
+
+<% end -%>
+<% if @facility_mail -%>
+#
+# Logging for the mail system.
+#
+mail.*                          <%= @facility_mail %>
+
+<% end -%>
+<% if @mailinfo or @mailwarn or @mailerr -%>
+#
+# Split mail files up so that it is easy to write scripts to parse
+# them.
+#
+<% end -%>
+<% if @mailinfo -%>
+mail.info                       <%= @mailinfo %>
+<% end -%>
+<% if @mailwarn -%>
+mail.warn                       <%= @mailwarn %>
+<% end -%>
+<% if @mailerr -%>
+mail.err                        <%= @mailerr %>
+<% end -%>

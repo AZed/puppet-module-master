@@ -1,0 +1,7 @@
+
+# check configs at the top and bottom of each hour
+<%= @rancid_cron_time %> * * * * rancid /var/lib/rancid/bin/rancid-run
+
+# clean out config differ logs
+50 23 * * * rancid /usr/bin/find /var/lib/rancid/logs/ -type f -mtime +2 -exec rm {} \;
+

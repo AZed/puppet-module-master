@@ -1,0 +1,53 @@
+#!/bin/bash
+#
+# trac-defaultperms project/name admin1 admin2 ...
+#
+
+if [ ! -d /var/trac/"$1" ] ; then
+    echo "No Trac directory found for '$1'"
+    exit 1
+fi
+
+if [ X"$2" = X ] ; then
+    echo "If you do not assign at least one project owner, web management will be impossible!"
+    exit 2
+fi
+
+PROJECT="$1"
+shift
+
+# For python performance reasons
+export PKG_RESOURCES_CACHE_ZIP_MANIFESTS=1
+
+# By default, allow nothing
+trac-admin /var/trac/$PROJECT permission remove '*' '*'
+
+# Limited Admin privileges.  For full power, use TRAC_ADMIN.
+trac-admin /var/trac/$PROJECT permission add project_admin \
+    project_manager project_tester project_viewer \
+    TICKET_ADMIN MILESTONE_ADMIN REPORT_ADMIN REPORT_CREATE REPORT_MODIFY \
+    WIKI_ADMIN EMAIL_VIEW
+
+# Project management
+trac-admin /var/trac/$PROJECT permission add project_manager \
+    project_tester project_viewer MILESTONE_CREATE MILESTONE_MODIFY \
+    ROADMAP_ADMIN WIKI_CREATE WIKI_MODIFY
+
+# Public areas (Wiki, Milestones)
+trac-admin /var/trac/$PROJECT permission add project_public \
+    MILESTONE_VIEW ROADMAP_VIEW WIKI_VIEW
+
+# Testers (Public + Tickets)
+trac-admin /var/trac/$PROJECT permission add project_tester \
+    project_public REPORT_VIEW TICKET_VIEW TICKET_CREATE TICKET_APPEND
+
+# Viewers (Read-only access to everything)
+trac-admin /var/trac/$PROJECT permission add project_viewer \
+    TICKET_VIEW MILESTONE_VIEW REPORT_VIEW ROADMAP_VIEW SEARCH_VIEW \
+    TIMELINE_VIEW WIKI_VIEW
+
+# Project owners
+while (( "$#" )) ; do
+    trac-admin /var/trac/$PROJECT permission add $1 TRAC_ADMIN
+    shift
+done

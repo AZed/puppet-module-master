@@ -1,0 +1,24 @@
+[Unit]
+Description=OpenSSH Daemon (port <%= @port %>)
+Documentation=man:sshd(8) man:sshd_config(5)
+After=network.target
+
+[Service]
+Type=forking
+<% if @config['PidFile'] -%>
+PIDFile=<%= @config['PidFile'] %>
+<% elsif @port == '22' -%>
+PIDFile=/var/run/sshd.pid
+<% else -%>
+PIDFile=/var/run/sshd-<%= @port %>.pid
+<% end -%>
+EnvironmentFile=/etc/ssh/alt/<%= @port %>/sysconfig
+ExecStart=/etc/ssh/alt/<%= @port %>/sbin/<%= @sshd_execname %> $SSHD_OPTS
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=always
+TasksMax=infinity
+
+[Install]
+Alias=ssh-2220.service
+WantedBy=multi-user.target

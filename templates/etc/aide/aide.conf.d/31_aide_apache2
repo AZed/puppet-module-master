@@ -1,0 +1,13 @@
+@@ifdef APACHE2_SUEXEC
+@@define APACHE2_LOGS (access|error|ssl_access|suexec)
+@@else
+@@define APACHE2_LOGS (access|error|ssl_access)
+@@endif
+/var/log/apache2/@@{APACHE2_LOGS}\.log$ FreqRotLog
+/var/log/apache2/@@{APACHE2_LOGS}\.log\.1$ LowLog
+/var/log/apache2/@@{APACHE2_LOGS}\.log\.2\.gz$ LoSerMemberLog
+/var/log/apache2/@@{APACHE2_LOGS}\.log\.[0-9]+\.gz$ SerMemberLog
+!/var/log/apache2/jk-runtime-status.*
+/var/run/apache2\.pid$ VarFile
+/var/run/apache2/ssl_scache$ VarFile
+/var/(log|run)/apache2$ VarDir

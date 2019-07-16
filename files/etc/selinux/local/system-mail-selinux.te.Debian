@@ -1,0 +1,14 @@
+module system-mail-selinux 1.1;
+
+require {
+        type var_t;
+        type system_mail_t;
+        type sysctl_crypto_t;
+        class dir search;
+        class file { read };
+}
+
+#============= user_mail_t ==============
+allow system_mail_t sysctl_crypto_t:dir search;
+allow system_mail_t sysctl_crypto_t:file read;
+allow system_mail_t var_t:file read;

@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+# Simple script to restore IPv6 iptables rules
+
+/sbin/ip6tables-restore < /etc/ip6tables.conf
+

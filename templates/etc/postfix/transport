@@ -1,0 +1,18 @@
+#
+# Postfix Transport Map
+#
+# The optional transport table specifies a mapping from domain
+# hierarchies to message delivery transports and/or relay hosts. The
+# mapping is used by the trivial-rewrite(8) daemon.
+#
+
+<% if @params['entries'] and @params['entries'].respond_to?('each') -%>
+<%   @params['entries'].each do |entry| -%>
+<%= entry %>
+<%   end -%>
+<% end -%>
+<% if @params['templates'] and @params['templates'].respond_to?('each') -%>
+<%   @params['templates'].each do |template| -%>
+<%= scope.function_template(["#{template}"]) -%>
+<%   end -%>
+<% end -%>

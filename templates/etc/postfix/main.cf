@@ -1,0 +1,310 @@
+### PUPPET-MANAGED -- DO NOT MODIFY ###
+
+<% if @defer -%>
+# ALL OUTBOUND MAIL IS DISABLED PENDING A 'sendmail -q'!
+defer_transports = smtp
+
+<% end -%>
+myhostname = <%= @myhostname %>
+<% if @osfamily == 'Debian' -%>
+# Debian-specific:  Specifying a file name will cause the first
+# line of that file to be used as the name.  The Debian default
+# is /etc/mailname.
+<% end -%>
+myorigin = <%= @origin %>
+# appending .domain is the MUA's job.
+<% if @append_dot_mydomain -%>
+append_dot_mydomain = yes
+<% else -%>
+append_dot_mydomain = no
+<% end -%>
+mydestination =
+<% @mydestination.each do |dest| -%>
+    <%= dest %>
+<% end -%>
+<% if @pcre_destination -%>
+    pcre:/etc/postfix/pcre_destination
+<% end -%>
+<% if @relayhost -%>
+relayhost = <%= @relayhost %>
+<% else -%>
+# This is an outbound mail server, no relaying active
+#relayhost =
+<% end -%>
+mynetworks =
+<% @mynetworks.each do |network| -%>
+    <%= network %>
+<% end -%>
+<% if @alias_maps -%>
+<%   if @alias_maps.respond_to?('join') -%>
+alias_maps = <%= @alias_maps.join(', ') %>
+<%   else -%>
+alias_maps = <%= @alias_maps %>
+<%   end -%>
+<% end -%>
+alias_database = <%= @alias_database %>
+inet_interfaces = <%= @interfaces.join(',') %>
+inet_protocols = <%= @inet_protocols %>
+mailbox_command = procmail -a "$EXTENSION"
+mailbox_size_limit = <%= @mailbox_size_limit %>
+message_size_limit = <%= @message_size_limit %>
+recipient_delimiter = <%= @recipient_delimiter %>
+smtpd_banner = <%= @smtpd_banner %>
+<% if @biff -%>
+biff = yes
+<% else -%>
+biff = no
+<% end -%>
+<% if @version.to_f > 3 -%>
+<%   if @compatibility_level.nil? -%>
+compatibility_level = 2
+<%   elsif @compatibility_level -%>
+compatibility_level = <%= @compatibility_level %>
+<%   end -%>
+<% end -%>
+
+# TLS parameters
+<% if @tls -%>
+smtpd_tls_security_level = <%= @tls %>
+smtpd_tls_cert_file = <%= @tls_cert_file %>
+smtpd_tls_key_file = <%= @tls_key_file %>
+<%   if @tls_ciphers -%>
+<%     if @tls_ciphers.respond_to?('join') -%>
+smtpd_tls_ciphers = <%= @tls_ciphers.join(', ') %>
+<%     else -%>
+smtpd_tls_ciphers = <%= @tls_ciphers %>
+<%     end -%>
+<%   end -%>
+<%   if @tls_exclude_ciphers -%>
+<%     if @tls_exclude_ciphers.respond_to?('join') -%>
+smtpd_tls_exclude_ciphers = <%= @tls_exclude_ciphers.join(', ') %>
+<%     else -%>
+smtpd_tls_exclude_ciphers = <%= @tls_exclude_ciphers %>
+<%     end -%>
+<%   end -%>
+<%   if @tls_protocols -%>
+<%     if @tls_protocols.respond_to?('join') -%>
+smtpd_tls_protocols = <%= @tls_protocols.join(', ') %>
+<%     else -%>
+smtpd_tls_protocols = <%= @tls_protocols %>
+<%     end -%>
+<%   end -%>
+<%   if @tls_mandatory_ciphers -%>
+<%     if @tls_mandatory_ciphers.respond_to?('join') -%>
+smtpd_tls_mandatory_ciphers = <%= @tls_mandatory_ciphers.join(', ') %>
+<%     else -%>
+smtpd_tls_mandatory_ciphers = <%= @tls_mandatory_ciphers %>
+<%     end -%>
+<%   end -%>
+<%   if @tls_mandatory_exclude_ciphers -%>
+<%     if @tls_mandatory_exclude_ciphers.respond_to?('join') -%>
+smtpd_tls_mandatory_exclude_ciphers = <%= @tls_mandatory_exclude_ciphers.join(', ') %>
+<%     else -%>
+smtpd_tls_mandatory_exclude_ciphers = <%= @tls_mandatory_exclude_ciphers %>
+<%     end -%>
+<%   end -%>
+<%   if @tls_mandatory_protocols -%>
+<%     if @tls_mandatory_protocols.respond_to?('join') -%>
+smtpd_tls_mandatory_protocols = <%= @tls_mandatory_protocols.join(', ') %>
+<%     end -%>
+smtpd_tls_mandatory_protocols = <%= @tls_mandatory_protocols %>
+<%   end -%>
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+<% else -%>
+smtpd_tls_security_level = none
+<% end -%>
+
+<% if @smtpd_sasl_auth_enable -%>
+# SASL
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_local_domain = <%= @smtpd_sasl_local_domain %>
+smtpd_sasl_path = <%= @smtpd_sasl_path %>
+smtpd_sasl_security_options = <%= @smtpd_sasl_security_options %>
+<% if @tls and @smtpd_sasl_tls_security_options -%>
+smtpd_sasl_tls_security_options = <%= @smtpd_sasl_tls_security_options %>
+<% end -%>
+smtpd_sasl_type = <%= @smtpd_sasl_type %>
+<%   if @tls and @smtpd_tls_auth_only -%>
+smtpd_tls_auth_only = yes
+<%   end -%>
+<%   if @broken_sasl_auth_clients -%>
+broken_sasl_auth_clients = yes
+<%   else -%>
+broken_sasl_auth_clients = no
+<%   end -%>
+
+<% end -%>
+<% if @srs -%>
+# SRS
+sender_canonical_maps = tcp:127.0.0.1:<%= @srs_forward_port %>
+sender_canonical_classes = envelope_sender
+recipient_canonical_maps = tcp:127.0.0.1:<%= @srs_reverse_port %>
+recipient_canonical_classes= envelope_recipient,header_recipient
+
+<% end -%>
+# Restrictions
+<% if @disable_vrfy_command -%>
+disable_vrfy_command = yes
+<% else -%>
+disable_vrfy_command = no
+<% end -%>
+smtpd_client_restrictions =
+<% @smtpd_client_restrictions.each do |restrict| -%>
+    <%= restrict %>
+<% end -%>
+<% if @smtpd_helo_required -%>
+smtpd_helo_required = yes
+smtpd_helo_restrictions =
+<%   @smtpd_helo_restrictions.each do |restrict| -%>
+    <%= restrict %>
+<%   end -%>
+<%   @smtpd_helo_warnings.each do |warn| -%>
+    warn_if_reject <%= warn %>
+<%   end -%>
+<% end -%>
+<% if Gem::Version.new(@version) >= Gem::Version.new('2.10') -%>
+smtpd_relay_restrictions =
+<%   @smtpd_relay_restrictions.each do |restrict| -%>
+    <%= restrict %>
+<%   end -%>
+<% end -%>
+smtpd_recipient_restrictions =
+<% if Gem::Version.new(@version) < Gem::Version.new('2.10') -%>
+<%   @smtpd_relay_restrictions.each do |restrict| -%>
+    <%= restrict %>
+<%   end -%>
+<% end -%>
+<% @smtpd_recipient_restrictions.each do |restrict| -%>
+    <%= restrict %>
+<% end -%>
+<% if @greylist -%>
+    check_policy_service inet:127.0.0.1:<%= @greylist_port %>
+<% end -%>
+<% if @spf -%>
+    <% if @spf == 'warn' %>warn_if_reject <% end %>check_policy_service unix:private/policyd-spf
+<% end -%>
+<% if @rbl_clients and @rbl_clients.respond_to?('each') -%>
+# RBL blacklists
+<%   @rbl_clients.each do |rbl| -%>
+    reject_rbl_client <%= rbl %>
+<%   end -%>
+<% end -%>
+<% if @rhsbl_clients and @rhsbl_clients.respond_to?('each') -%>
+# RHSBL blacklists
+<%   @rhsbl_clients.each do |rhsbl| -%>
+    reject_rhsbl_helo <%= rhsbl %>
+    reject_rhsbl_reverse_client <%= rhsbl %>
+    reject_rhsbl_sender <%= rhsbl %>
+<%   end -%>
+<% end -%>
+smtpd_sender_restrictions =
+<% @smtpd_sender_restrictions.each do |restrict| -%>
+    <%= restrict %>
+<% end -%>
+
+<% if @smtpd_restriction_classes and @smtpd_restriction_classes.respond_to?('keys') -%>
+# Restriction Classes
+smtpd_restriction_classes =
+<%   @smtpd_restriction_classes.keys.each do |key| -%>
+    <%= key %>
+<%   end -%>
+
+<%   @smtpd_restriction_classes.keys.each do |key| -%>
+<%= key %> =
+<%     @smtpd_restriction_classes[key].each do |line| -%>
+    <%= line %>
+<%     end -%>
+<%   end -%>
+
+<% end -%>
+<% if @transport_maps -%>
+# Transports
+<%   if @transport_maps.respond_to?('join') -%>
+transport_maps = <%= @transport_maps.join(' ') %>
+<%   else -%>
+transport_maps = <%= @transport_maps %>
+<%   end -%>
+
+<% end -%>
+# Virtual address configuration
+<% if @virtual_alias_domains -%>
+virtual_alias_domains =
+<%   @virtual_alias_domains.each do |domain| -%>
+    <%= domain %>
+<%   end -%>
+<% end -%>
+<% if @virtual_alias_maps -%>
+virtual_alias_maps = <%= @virtual_alias_maps.join(' ') %>
+<% end -%>
+<% if @virtual_mailbox_base -%>
+virtual_mailbox_base = <%= @virtual_mailbox_base %>
+<% end -%>
+<% if @virtual_mailbox_limit -%>
+virtual_mailbox_limit = <%= @virtual_mailbox_limit %>
+<% end -%>
+<% if @virtual_mailbox_domains -%>
+virtual_mailbox_domains =
+<%   @virtual_mailbox_domains.each do |domain| -%>
+    <%= domain %>
+<%   end -%>
+<% end -%>
+<% if @virtual_mailbox_maps -%>
+virtual_mailbox_maps = <%= @virtual_mailbox_maps.join(' ') %>
+<% end -%>
+<% if @maildrop -%>
+virtual_transport = 'maildrop'
+<% else -%>
+virtual_transport = 'virtual'
+<% end -%>
+
+<% if @milters.any? or @milters_non_smtpd.any? or @milters_smtpd.any? -%>
+# Milters
+milter_default_action = <%= @milter_default_action %>
+<%   if @milter_protocol -%>
+milter_protocol = <%= @milter_protocol -%>
+<%   end -%>
+<%   if @milters.any? or @milters_non_smtpd.any? -%>
+non_smtpd_milters = <%= (@milters + @milters_non_smtpd).join(" ") %>
+<%   end -%>
+<%   if @milters.any? or @milters_smtpd.any? -%>
+smtpd_milters = <%= (@milters + @milters_smtpd).join(" ") %>
+<%   end -%>
+
+<% end -%>
+<% if @maildrop or @spf -%>
+# Non-Postfix software configuration options
+<%   if @maildrop -%>
+maildrop_destination_recipient_limit = 1
+<%   end -%>
+<%   if @spf -%>
+policyd-spf_time_limit = 3600
+<%   end -%>
+
+<% end -%>
+<% if @daemon_directory -%>
+# The daemon_directory parameter specifies the location of all Postfix
+# daemon programs (i.e. programs listed in the master.cf file). This
+# directory must be owned by root.
+#
+daemon_directory = <%= @daemon_directory -%>
+
+<% end -%>
+<% if @setgid_group -%>
+# setgid_group: The group for mail submission and queue management
+# commands.  This must be a group name with a numerical group ID that
+# is not shared with other accounts, not even with the Postfix account.
+#
+setgid_group = <%= @setgid_group -%>
+
+<% end -%>
+<% if @readme_directory -%>
+readme_directory = <%= @readme_directory %>
+<% else -%>
+readme_directory = no
+<% end -%>
+<% if @html_directory -%>
+html_directory = <%= @html_directory %>
+<% else -%>
+html_directory = no
+<% end -%>

@@ -1,0 +1,11 @@
+# system-wide mercurial configuration file
+# See hgrc(5) for more information
+
+[diff]
+git = True
+
+[trusted]
+users = root
+<% if @hgrc_trusted_groups -%>
+groups = <%= @hgrc_trusted_groups.join(",") %>
+<% end -%>

@@ -1,0 +1,5 @@
+<% if @trusted_hosts and @trusted_hosts.respond_to?('each') -%>
+<%   @trusted_hosts.each do |line| -%>
+<%= line %>
+<%   end -%>
+<% end -%>

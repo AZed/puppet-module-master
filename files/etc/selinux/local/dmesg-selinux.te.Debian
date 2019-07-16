@@ -1,0 +1,11 @@
+module dmesg-selinux 1.1;
+
+require {
+        type dmesg_t;
+        type etc_t;
+        class file { read };
+}
+
+#============= dmesg_t ==============
+allow dmesg_t etc_t:file read;
+

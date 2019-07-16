@@ -1,0 +1,6 @@
+
+# Check the power supplies
+CheckIPMIPowerSupply
+
+# Check the system event log
+CheckIPMISystemEventLog

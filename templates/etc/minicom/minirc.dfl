@@ -1,0 +1,11 @@
+# Machine-generated file - use "minicom -s" to change parameters.
+pu port             <%= @minicom_port      %>
+pu baudrate         <%= @minicom_baudrate  %>
+pu bits             <%= @minicom_bits      %>
+pu parity           <%= @minicom_parity    %>
+pu stopbits         <%= @minicom_stopbits  %>
+pu minit            <%= @minicom_minit     %>
+pu mreset           <%= @minicom_mreset    %>
+pu mhangup          <%= @minicom_mhangup   %>
+pu mdialcan         <%= @minicom_mdialcan  %>
+pu rtscts           <%= @minicom_rtscts    %>

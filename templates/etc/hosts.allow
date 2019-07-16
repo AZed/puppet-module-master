@@ -1,0 +1,25 @@
+# Permit all access from localhost
+ALL: 127.0.0.1: ALLOW
+ALL: localhost: ALLOW
+ALL: [::1]: ALLOW
+
+<% if @hosts_allow_templates -%>
+<%   @hosts_allow_templates.each do |template| -%>
+<%= scope.function_template(["#{template}"]) -%>
+
+<%   end -%>
+<% end -%>
+<% if @hosts_allow_custom_lines -%>
+###
+# Miscellaneous custom entries
+###
+<% @hosts_allow_custom_lines.each do |line| -%>
+<%= line %>
+<% end -%>
+
+<% end -%>
+###
+# This is the fallthrough.  No local customizations below this point.
+###
+
+ALL: ALL: DENY

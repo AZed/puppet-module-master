@@ -1,0 +1,121 @@
+# Generated from /etc/aliases
+aliases.db
+
+# CUPS autogenerates these files, and they can change frequently
+cups/ppd/
+cups/printers.conf
+cups/printers.conf.O
+cups/subscriptions.conf
+cups/subscriptions.conf.O
+printcap
+
+# LetsEncrypt intermediary files
+letsencrypt/accounts/acme-staging.api.letsencrypt.org
+letsencrypt/csr
+letsencrypt/keys
+
+# Tomcat may periodically reorder the contents of this file,
+# generating spurious change entries
+tomcat*/tomcat-users.xml
+
+# Potentially large binary tarballs used for backup or deployment
+*.tar.bz2
+*.tar.gz
+*.tgz
+*.zip
+
+# Other backup or temporary files
+*.backup
+*.bak
+*.bck
+*.cfsaved
+*.default
+*.dpkg-*
+*.old
+*.old.*
+*.orig
+*.puppet-bak
+*.rpmnew
+*.rpmorig
+*.rpmsave
+*.save
+*.ucf-*
+*.YaST2save
+*.yast2save
+*~
+.*.sw?
+.sw?
+\#*\#
+DEADJOE
+group-
+gshadow-
+passwd-
+shadow-
+lvm/backup/
+<% if @gitignore_templates -%>
+<%   @gitignore_templates.each do |template| -%>
+
+<%= scope.function_template(["#{template}"]) -%>
+<%   end -%>
+<% end -%>
+<% if @gitignore_lines -%>
+
+<%   @gitignore_lines.each do |line| -%>
+<%= line %>
+<%   end -%>
+<% end -%>
+
+# begin section managed by etckeeper (do not edit this section by hand)
+
+# new and old versions of conffiles, stored by dpkg
+*.dpkg-*
+# new and old versions of conffiles, stored by ucf
+*.ucf-*
+
+# old versions of files
+*.old
+
+# mount(8) records system state here, no need to store these
+blkid.tab
+blkid.tab.old
+
+# some other files in /etc that typically do not need to be tracked
+nologin
+ld.so.cache
+prelink.cache
+mtab
+mtab.fuselock
+.pwd.lock
+*.LOCK
+network/run
+adjtime
+lvm/cache
+lvm/archive
+X11/xdm/authdir/authfiles/*
+ntp.conf.dhcp
+.initctl
+webmin/fsdump/*.status
+webmin/webmin/oscache
+apparmor.d/cache/*
+service/*/supervise/*
+service/*/log/supervise/*
+sv/*/supervise/*
+sv/*/log/supervise/*
+*.elc
+*.pyc
+*.pyo
+init.d/.depend.*
+openvpn/openvpn-status.log
+cups/subscriptions.conf
+cups/subscriptions.conf.O
+fake-hwclock.data
+check_mk/logwatch.state
+
+# editor temp files
+*~
+.*.sw?
+.sw?
+\#*\#
+DEADJOE
+
+# end section managed by etckeeper

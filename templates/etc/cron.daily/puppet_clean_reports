@@ -1,0 +1,2 @@
+#!/bin/sh
+find /var/lib/puppet/reports -type f -mtime +<%= @reports_days -%> -exec rm {} \+

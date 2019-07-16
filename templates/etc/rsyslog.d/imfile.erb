@@ -1,0 +1,32 @@
+<% if @legacy -%>
+$InputFileName <%= @file %>
+<%   if @statefile -%>
+$InputFileStateFile <%= @statefile %>
+<%   end -%>
+$InputFileTag <%= @imfile_tag %>
+$InputFileSeverity <%= @severity %>
+$InputFileFacility <%= @facility %>
+<%   if @readmode -%>
+$InputFileReadMode <%= @readmode %>
+<%   end -%>
+<%   if @ruleset -%>
+$InputFileBindRuleset <%= @ruleset %>
+<%   end -%>
+$InputRunFileMonitor
+<% else -%>
+input(type="imfile"
+      File="<%= @file %>"
+<%   if @statefile -%>
+      StateFile="<%= @statefile %>"
+<%   end -%>
+      Tag="<%= @imfile_tag %>"
+      Facility="<%= @facility %>"
+      Severity="<%= @severity %>"
+<%   if @readmode -%>
+      ReadMode="<%= @readmode %>"
+<%   end -%>
+<%   if @ruleset -%>
+      Ruleset="<%= @ruleset %>"
+<%   end -%>
+)
+<% end -%>

@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# Validates the contents of a Puppet repository before commit
+#
+# To activate, copy this to .git/hooks/pre-commit
+#
+# Files in the manifests/ area (or any .pp file) must pass:
+#   puppet parser validate <file>
+# Files in the templates/ area (or any .erb file) must pass:
+#   erb -x -T '-' -P <file> | ruby -c
+
+
+for file in $(git diff --cached --name-only --diff-filter=ACMRTXB); do
+    case $file in
+    manifests/*)
+        echo "Validating ${file} ..."
+        if (! puppet parser validate <(git show :$file)) ; then
+            echo "Invalid manifest: ${file}" >&2
+            exit 1
+        fi
+        ;;
+    templates/*|*.erb)
+        echo -n "Checking ERB syntax in ${file} ... "
+        if ! (erb -x -T '-' -P <(git show :$file) | ruby -c) ; then
+            echo "Invalid template: ${file}" >&2
+            exit 2
+        fi
+        ;;
+    esac
+done

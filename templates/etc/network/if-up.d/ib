@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [ "$IFACE" == "ib0" -o "$IFACE" == "ib1" ]; then
+
+    # Set connected mode
+    echo "connected" > /sys/class/net/$IFACE/mode
+
+    # Set the MTU to 65520
+    ifconfig $IFACE mtu 65520
+
+    # sysctl settings (this should be in /etc/sysctl.conf instead)
+    /sbin/sysctl -w net.ipv4.tcp_timestamps=0
+    /sbin/sysctl -w net.ipv4.tcp_sack=0
+    /sbin/sysctl -w net.core.netdev_max_backlog=250000
+    /sbin/sysctl -w net.core.rmem_max=16777216
+    /sbin/sysctl -w net.core.wmem_max=16777216
+    /sbin/sysctl -w net.core.rmem_default=16777216
+    /sbin/sysctl -w net.core.wmem_default=16777216
+    /sbin/sysctl -w net.core.optmem_max=16777216
+    /sbin/sysctl -w net.ipv4.tcp_mem="16777216 16777216 16777216"
+    /sbin/sysctl -w net.ipv4.tcp_rmem="4096 87380 16777216"
+    /sbin/sysctl -w net.ipv4.tcp_wmem="4096 65536 16777216"
+else
+    echo "ib: unknown interface $IFACE"
+fi

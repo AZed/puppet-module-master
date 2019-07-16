@@ -1,0 +1,5 @@
+<% if @deb_lines -%>
+<%   @deb_lines.each do |line| -%>
+<%= line %>
+<%   end -%>
+<% end -%>

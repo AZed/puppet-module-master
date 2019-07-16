@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# istracadmin <username>
+#
+# Exits 0 if the specified username has TRAC_ADMIN or project_admin
+# rights on at least one Trac project, and lists the first project
+# found.
+#
+# Exits 1 if no projects were found where that username has TRAC_ADMIN
+# or project_admin status.
+#
+# Gets the list of Trac projects by looking for subdirectories under
+# /var/trac
+#
+
+TRACS=`find /var/trac/* -maxdepth 0 -type d`
+
+for trac in $TRACS ; do
+    REPO=`basename $trac`
+
+    ISADMIN=`psql -tA trac-$REPO \
+             -c "SELECT username FROM permission WHERE
+                  (action = 'TRAC_ADMIN' or action = 'project_admin')
+                  AND username = '$1'"`;
+    if [ "X$ISADMIN" != "X" ] ; then
+        echo "Found admin privileges for $1 in $REPO"
+        exit 0
+    fi
+done
+
+exit 1

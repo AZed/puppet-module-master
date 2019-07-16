@@ -1,0 +1,11 @@
+# Portmap configuration file [MANAGED BY PUPPET]
+#
+# Note: if you manually edit this configuration file,
+# portmap configuration scripts will avoid modifying it
+# (for example, by running 'dpkg-reconfigure portmap').
+
+# If you want portmap to listen only to the loopback
+# interface, uncomment the following line (it will be
+# uncommented automatically if you configure this
+# through debconf).
+<% if !portmap_allow %>#<% end %>OPTIONS="-i 127.0.0.1"

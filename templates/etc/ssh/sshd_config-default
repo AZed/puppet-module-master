@@ -1,0 +1,463 @@
+###
+###  MANAGED BY PUPPET - LOCAL CHANGES WILL BE OVERWRITTEN
+###
+
+# This is the sshd server system-wide configuration file.  See
+# sshd_config(5) for more information.
+
+# The strategy used for options in the default sshd_config shipped with
+# OpenSSH is to specify options with their default value where
+# possible, but leave them commented.  Uncommented options override the
+# default value.
+
+Port <%= @port %>
+<% if @config['addressfamily'] -%>
+AddressFamily <%= @config['AddressFamily'] %>
+<% else -%>
+#AddressFamily any
+<% end -%>
+<% if @config['ListenAddress'] -%>
+<%   @config['ListenAddress'].each do |la| -%>
+ListenAddress <%= la %>
+<%   end -%>
+<% else -%>
+#ListenAddress 0.0.0.0
+#ListenAddress ::
+<% end -%>
+<% if @config['Protocol'] -%>
+Protocol <%= @config['Protocol'] %>
+<% elsif Gem::Version.new(@version) < Gem::Version.new('6.0') -%>
+Protocol 2
+<% end -%>
+
+Protocol 2
+
+<% if @config['PidFile'] -%>
+PidFile <%= @config['PidFile'] %>
+<% elsif @port == '22' -%>
+#PidFile /var/run/sshd.pid
+<% else -%>
+PidFile /var/run/sshd-<%= @port %>.pid
+<% end -%>
+
+<% if @config['HostKey'] and @config['HostKey'].respond_to?('each') -%>
+<%   @config['HostKey'].each do |hk| -%>
+HostKey <%= hk %>
+<%   end -%>
+<% elsif Gem::Version.new(@version) < Gem::Version.new('6.0') -%>
+#HostKey /etc/ssh/ssh_host_rsa_key
+<% elsif Gem::Version.new(@version) < Gem::Version.new('6.5') -%>
+#HostKey /etc/ssh/ssh_host_rsa_key
+#HostKey /etc/ssh/ssh_host_ecdsa_key
+<% else -%>
+#HostKey /etc/ssh/ssh_host_rsa_key
+#HostKey /etc/ssh/ssh_host_ecdsa_key
+#HostKey /etc/ssh/ssh_host_ed25519_key
+<% end -%>
+
+# Ciphers and keying
+<% if @config['Ciphers']
+     if @config['Ciphers'].respond_to?('join') -%>
+Ciphers <%= @config['Ciphers'].join(',') %>
+<%   else -%>
+Ciphers <%= @config['Ciphers'] %>
+<%   end -%>
+<% end -%>
+<% if @config['KexAlgorithms']
+     if @config['KexAlgorithms'].respond_to?('join') -%>
+KexAlgorithms <%= @config['KexAlgorithms'].join(',') %>
+<%   else -%>
+KexAlgorithms <%= @config['KexAlgorithms'] %>
+<%   end -%>
+<% end -%>
+<% if @config['MACs']
+     if @config['MACs'].respond_to?('join') -%>
+MACs <%= @config['MACs'].join(',') %>
+<%   else -%>
+MACs <%= @config['MACs'] %>
+<%   end -%>
+<% end -%>
+<% if @config['RekeyLimit'] -%>
+RekeyLimit <%= @config['RekeyLimit'] %>
+<% else -%>
+#RekeyLimit default none
+<% end -%>
+
+# Logging
+<% if @config['SyslogFacility'] -%>
+SyslogFacility <%= @config['SyslogFacility'] %>
+<% else -%>
+#SyslogFacility AUTH
+<% end -%>
+<% if @config['LogLevel'] -%>
+LogLevel <%= @config['LogLevel'] %>
+<% else -%>
+#LogLevel INFO
+<% end -%>
+
+# Authentication:
+<% if @config['AuthenticationMethods']
+     if @config['AuthenticationMethods'].respond_to?('join') -%>
+AuthenticationMethods <%= @config['AuthenticationMethods'].join(',') %>
+<%   else -%>
+AuthenticationMethods <%= @config['AuthenticationMethods'] %>
+<%   end -%>
+<% end -%>
+<% if @config['LoginGraceTime'] -%>
+LoginGraceTime <%= @config['LoginGraceTime'] %>
+<% else -%>
+#LoginGraceTime 2m
+<% end -%>
+<% if @config['PermitRootLogin'] -%>
+PermitRootLogin <%= @config['PermitRootLogin'] %>
+<% else -%>
+#PermitRootLogin without-password
+<% end -%>
+<% if @config['StrictModes'] -%>
+StrictModes <%= @config['StrictModes'] %>
+<% else -%>
+#StrictModes yes
+<% end -%>
+<% if @config['MaxAuthTries'] -%>
+MaxAuthTries <%= @config['MaxAuthTries'] %>
+<% else -%>
+#MaxAuthTries 6
+<% end -%>
+<% if @config['MaxSessions'] -%>
+MaxSessions <%= @config['MaxSessions'] %>
+<% else -%>
+#MaxSessions 10
+<% end -%>
+
+<% if @config['PubkeyAuthentication'].nil? and @radius.respond_to?('[]') and @radius['sshd'] -%>
+PubkeyAuthentication no
+<% elsif @config['PubkeyAuthentication'] -%>
+PubkeyAuthentication <%= @config['PubkeyAuthentication'] %>
+<% else -%>
+#PubkeyAuthentication yes
+<% end -%>
+<% if @config['AuthorizedKeysFile'] -%>
+AuthorizedKeysFile <%= @config['AuthorizedKeysFile'] %>
+<% else -%>
+
+# The default is to check both .ssh/authorized_keys and .ssh/authorized_keys2
+# but this is overridden so installations will only check .ssh/authorized_keys
+AuthorizedKeysFile	.ssh/authorized_keys
+<% end -%>
+<% if @config['AuthorizedKeysCommand'] -%>
+AuthorizedKeyscommand <%= @config['AuthorizedKeysCommand'] %>
+<% else -%>
+#AuthorizedKeysCommand none
+<% end -%>
+<% if @config['AuthorizedKeysCommandUser'] -%>
+AuthorizedKeysCommandUser <%= @config['AuthorizedKeysCommandUser'] %>
+<% else -%>
+#AuthorizedKeysCommandUser nobody
+<% end -%>
+<% if @config['AuthorizedPrincipalsFile'] -%>
+AuthorizedPrincipalsFile <%= @config['AuthorizedPrincipalsFile'] %>
+<% else -%>
+#AuthorizedPrincipalsFile none
+<% end -%>
+
+
+# For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
+<% if @config['HostbasedAuthentication'] -%>
+HostbasedAuthentication <%= @config['HostbasedAuthentication'] %>
+<% else -%>
+#HostbasedAuthentication no
+<% end -%>
+# Change to yes if you don't trust ~/.ssh/known_hosts for
+# HostbasedAuthentication
+<% if @config['IgnoreUserKnownHosts'] -%>
+IgnoreUserKnownHosts <%= @config['IgnoreUserKnownHosts'] %>
+<% else -%>
+#IgnoreUserKnownHosts no
+<% end -%>
+# Don't read the user's ~/.rhosts and ~/.shosts files
+<% if @config['IgnoreRhosts'] -%>
+IgnoreRhosts <%= @config['IgnoreRhosts'] %>
+<% else -%>
+#IgnoreRhosts yes
+<% end -%>
+
+# To disable tunneled clear text passwords, change to no here!
+<% if @config['PasswordAuthentication'] -%>
+PasswordAuthentication <%= @config['PasswordAuthentication'] %>
+<% else -%>
+#PasswordAuthentication yes
+<% end -%>
+<% if @config['PermitEmptyPasswords'] -%>
+PermitEmptyPasswords <%= @config['PermitEmptyPasswords'] %>
+<% else -%>
+#PermitEmptyPasswords no
+<% end -%>
+
+# Change to yes to enable challenge-response passwords (beware issues with
+# some PAM modules and threads)
+<% if @config['ChallengeResponseAuthentication'] -%>
+ChallengeResponseAuthentication <%= @config['ChallengeResponseAuthentication'] %>
+<% else -%>
+#ChallengeResponseAuthentication yes
+<% end -%>
+<% if @config['KbdInteractiveAuthentication'] -%>
+KbdInteractiveAuthentication <%= @config['KbdInteractiveAuthentication'] %>
+<% end -%>
+
+<% if @config['DenyUsers'] or @config['AllowUsers'] or @config['DenyGroups'] or @config['AllowGroups'] -%>
+# Access control
+<%   if @config['DenyUsers']
+       if @config['DenyUsers'].respond_to?('join') -%>
+DenyUsers <%= @config['DenyUsers'].join(' ') %>
+<%     else -%>
+DenyUsers <%= @config['DenyUsers'] %>
+<%     end -%>
+<%   end -%>
+<%   if @config['AllowUsers']
+       if @config['AllowUsers'].respond_to?('join') -%>
+AllowUsers <%= @config['AllowUsers'].join(' ') %>
+<%     else -%>
+AllowUsers <%= @config['AllowUsers'] %>
+<%     end -%>
+<%   end -%>
+<%   if @config['DenyGroups']
+       if @config['DenyGroups'].respond_to?('join') -%>
+DenyGroups <%= @config['DenyGroups'].join(' ') %>
+<%     else -%>
+DenyGroups <%= @config['DenyGroups'] %>
+<%     end -%>
+<%   end -%>
+<%   if @config['AllowGroups']
+       if @config['AllowGroups'].respond_to?('join') -%>
+AllowGroups <%= @config['AllowGroups'].join(' ') %>
+<%     else -%>
+AllowGroups <%= @config['AllowGroups'] %>
+<%     end -%>
+<%   end -%>
+
+<% end -%>
+# Kerberos options
+<% if @config['KerberosAuthentication'] -%>
+KerberosAuthentication <%= @config['KerberosAuthentication'] %>
+<% else -%>
+#KerberosAuthentication no
+<% end -%>
+<% if @config['KerberosOrLocalPasswd'] -%>
+KerberosOrLocalPasswd <%= @config['KerberosOrLocalPasswd'] %>
+<% else -%>
+#KerberosOrLocalPasswd yes
+<% end -%>
+<% if @config['KerberosTicketCleanup'] -%>
+KerberosTicketCleanup <%= @config['KerberosTicketCleanup'] %>
+<% else -%>
+#KerberosTicketCleanup yes
+<% end -%>
+<% if @config['KerberosGetAFSToken'] -%>
+KerberosGetAFSToken <%= @config['KerberosGetAFSToken'] %>
+<% else -%>
+#KerberosGetAFSToken no
+<% end -%>
+
+# GSSAPI options
+<% if @config['GSSAPIAuthentication'] -%>
+GSSAPIAuthentication <%= @config['GSSAPIAuthentication'] %>
+<% else -%>
+#GSSAPIAuthentication no
+<% end -%>
+<% if @config['GSSAPICleanupCredentials'] -%>
+GSSAPICleanupCredentials <%= @config['GSSAPICleanupCredentials'] %>
+<% else -%>
+#GSSAPICleanupCredentials yes
+<% end -%>
+<% if @config['GSSAPIStrictAcceptorCheck'] -%>
+GSSAPIStrictAcceptorCheck <%= @config['GSSAPIStrictAcceptorCheck'] %>
+<% else -%>
+#GSSAPIStrictAcceptorCheck yes
+<% end -%>
+<% if @config['GSSAPIKeyExchange'] -%>
+GSSAPIKeyExchange <%= @config['GSSAPIKeyExchange'] %>
+<% else -%>
+#GSSAPIKeyExchange no
+<% end -%>
+
+# Set this to 'yes' to enable PAM authentication, account processing,
+# and session processing. If this is enabled, PAM authentication will
+# be allowed through the ChallengeResponseAuthentication and
+# PasswordAuthentication.  Depending on your PAM configuration,
+# PAM authentication via ChallengeResponseAuthentication may bypass
+# the setting of "PermitRootLogin without-password".
+# If you just want the PAM account and session checks to run without
+# PAM authentication, then enable this but set PasswordAuthentication
+# and ChallengeResponseAuthentication to 'no'.
+<% if @osfamily == 'RedHat' -%>
+# WARNING: 'UsePAM no' is not supported in Red Hat Enterprise Linux
+# and may cause several problems.
+<% end -%>
+<% if @config['UsePAM'] -%>
+UsePAM <%= @config['UsePAM'] %>
+<% else -%>
+UsePAM yes
+<% end -%>
+
+<% if @config['AllowAgentForwarding'] -%>
+AllowAgentForwarding <%= @config['AllowAgentForwarding'] %>
+<% else -%>
+#AllowAgentForwarding yes
+<% end -%>
+<% if @config['AllowTcpForwarding'] -%>
+AllowTcpForwarding <%= @config['AllowTcpForwarding'] %>
+<% else -%>
+#AllowTcpForwarding yes
+<% end -%>
+<% if @config['GatewayPorts'] -%>
+GatewayPorts <%= @config['GatewayPorts'] %>
+<% else -%>
+#GatewayPorts no
+<% end -%>
+<% if @config['X11Forwarding'] -%>
+X11Forwarding <%= @config['X11Forwarding'] %>
+<% else -%>
+#X11Forwarding no
+<% end -%>
+<% if @config['X11DisplayOffset'] -%>
+X11DisplayOffset <%= @config['X11DisplayOffset'] %>
+<% else -%>
+#X11DisplayOffset 10
+<% end -%>
+<% if @config['X11UseLocalhost'] -%>
+X11UseLocalhost <%= @config['X11UseLocalhost'] %>
+<% else -%>
+#X11UseLocalhost yes
+<% end -%>
+<% if @config['PermitOpen'] -%>
+PermitOpen <%= @config['PermitOpen'] %>
+<% else -%>
+#PermitOpen any
+<% end -%>
+<% if @config['PermitTTY'] -%>
+PermitTTY <%= @config['PermitTTY'] %>
+<% else -%>
+#PermitTTY yes
+<% end -%>
+<% if @config['PrintMotd'] -%>
+PrintMotd <%= @config['PrintMotd'] %>
+<% else -%>
+#PrintMotd yes
+<% end -%>
+<% if @config['PrintLastLog'] -%>
+PrintLastLog <%= @config['PrintLastLog'] %>
+<% else -%>
+#PrintLastLog yes
+<% end -%>
+<% if @config['TCPKeepAlive'] -%>
+TCPKeepAlive <%= @config['TCPKeepAlive'] %>
+<% else -%>
+#TCPKeepAlive yes
+<% end -%>
+<% if @config['UseLogin'] -%>
+UseLogin <%= @config['UseLogin'] %>
+<% else -%>
+#UseLogin no
+<% end -%>
+<% if @config['UsePrivilegeSeparation'] -%>
+UsePrivilegeSeparation <%= @config['UsePrivilegeSeparation'] %>
+<% else -%>
+#UsePrivilegeSeparation sandbox
+<% end -%>
+<% if @config['PermitUserEnvironment'] -%>
+PermitUserEnvironment <%= @config['PermitUserEnvironment'] %>
+<% else -%>
+#PermitUserEnvironment no
+<% end -%>
+<% if @config['Compression'] -%>
+Compression <%= @config['Compression'] %>
+<% else -%>
+#Compression delayed
+<% end -%>
+<% if @config['ClientAliveInterval'] -%>
+ClientAliveInterval <%= @config['ClientAliveInterval'] %>
+<% else -%>
+#ClientAliveInterval 0
+<% end -%>
+<% if @config['ClientAliveCountMax'] -%>
+ClientAliveCountMax <%= @config['ClientAliveCountMax'] %>
+<% else -%>
+#ClientAliveCountMax 3
+<% end -%>
+<% if @config['UseDNS'] -%>
+UseDNS <%= @config['UseDNS'] %>
+<% else -%>
+#UseDNS no
+<% end -%>
+
+<% if @config['MaxStartups'] -%>
+MaxStartups <%= @config['MaxStartups'] %>
+<% else -%>
+#MaxStartups 10:30:100
+<% end -%>
+<% if @config['PermitTunnel'] -%>
+PermitTunnel <%= @config['PermitTunnel'] %>
+<% else -%>
+#PermitTunnel no
+<% end -%>
+<% if @config['ChrootDirectory'] -%>
+ChrootDirectory <%= @config['ChrootDirectory'] %>
+<% else -%>
+#ChrootDirectory none
+<% end -%>
+<% if @config['VersionAddendum'] -%>
+VersionAddendum <%= @config['VersionAddendum'] %>
+<% else -%>
+#VersionAddendum none
+<% end -%>
+
+<% if @config['Banner'] -%>
+Banner <%= @config['Banner'] %>
+<% else -%>
+# no default banner path
+#Banner none
+<% end -%>
+
+<% if @config['AcceptEnv'] -%>
+# Allow client to pass the following environment variables
+<%   @config['AcceptEnv'].each do |env| %>
+AcceptEnv <%= env %>
+<%   end -%>
+<% else -%>
+# Allow client to pass locale environment variables
+AcceptEnv LANG LANGUAGE LC_* XMODIFIERS
+<% end -%>
+
+# override default of no subsystems
+<% if @config['Subsystem'] -%>
+Subsystem <%= @config['Subsystem'] %>
+<% elsif @osfamily == 'Debian' -%>
+Subsystem sftp /usr/lib/openssh/sftp-server
+<% elsif @osfamily == 'RedHat' -%>
+Subsystem sftp /usr/libexec/openssh/sftp-server
+<% elsif @osfamily == 'Suse' -%>
+Subsystem sftp /usr/lib64/ssh/sftp-server
+<% end %>
+
+<% if @config['Match'] and @config['Match'].respond_to?('each') -%>
+# Conditional rules
+<%   @config['Match'].each do |matchentry| -%>
+Match <%= matchentry['type'] -%>
+<%     if matchentry['not'] -%>
+ !<%= matchentry['list'].join(',!') %>,*
+<%     else -%>
+ <%= matchentry['list'].join(',') %>
+<%     end -%>
+<%     matchentry['rules'].each do |rule| -%>
+    <%= rule %>
+<%     end -%>
+
+<%   end -%>
+<% else -%>
+# Example of overriding settings on a per-user basis
+#Match User anoncvs
+#	X11Forwarding no
+#	AllowTcpForwarding no
+#	PermitTTY no
+#	ForceCommand cvs server
+<% end -%>

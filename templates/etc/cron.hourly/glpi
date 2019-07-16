@@ -1,0 +1,2 @@
+#!/bin/sh
+sh /usr/share/glpi/plugins/massocsimport/scripts/ocsng_fullsync.sh

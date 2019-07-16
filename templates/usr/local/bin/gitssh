@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+# This is a ssh wrapper for Git that automatically detects whether a
+# per-repository SSH key has been defined, and if so, passes it as an
+# argument to ssh.  It is useful where an SSH agent is impractical and
+# .ssh/config isn't working (e.g. in some root sudo environments)
+#
+# It will also run ssh at LogLevel=Error, suppressing banner text with
+# or without a key.
+#
+# To set up a repository for use with this, run:
+#   git config ssh.key <path_to_key>
+# e.g.
+#   git config ssh.key ~/.ssh/id_rsa-gitproject
+#
+# A different key can be specified for each repository.  If no key is
+# specified, this wrapper will still fall through to a straight ssh
+# call.
+#
+# After that is done, if this script is in the path, run:
+#   export GIT_SSH=gitssh
+#
+# If it is not in the path, specify the full path to gitssh.
+#
+
+SSHKEY=$(git config ssh.key)
+
+if [ -z "${SSHKEY}" ]; then
+    GITOPTS="-o LogLevel=Error"
+else
+    GITOPTS="-o LogLevel=Error -i ${SSHKEY}"
+fi
+
+exec ssh $GITOPTS "$@"

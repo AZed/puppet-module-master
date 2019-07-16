@@ -1,0 +1,3 @@
+# Foswiki's unofficial Debian repository
+deb http://fosiki.com/Foswiki_debian/ stable main contrib
+deb-src http://fosiki.com/Foswiki_debian/ stable main contrib

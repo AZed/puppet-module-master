@@ -1,0 +1,15 @@
+module xauth-pty-selinux 1.6;
+
+require {
+        type xauth_t;
+        type sshd_devpts_t;
+        type fusefs_t;
+        class file {  write getattr read link create unlink open };
+        class dir { search read write remove_name add_name };
+        class chr_file { read write getattr ioctl};
+}
+
+#============= xauth_t ==============
+allow xauth_t sshd_devpts_t:chr_file { read write getattr ioctl };
+allow xauth_t fusefs_t:dir { search read write remove_name add_name };
+allow xauth_t fusefs_t:file {  write getattr read open create unlink link };

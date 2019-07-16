@@ -1,0 +1,7 @@
+# This file contains no rules by default, and is there just to be
+# overridden by machine-specific entries.
+<% if @aide_misc_custom_lines -%>
+<%   @aide_misc_custom_lines.each do |customline| -%>
+<%= customline %>
+<%   end -%>
+<% end -%>

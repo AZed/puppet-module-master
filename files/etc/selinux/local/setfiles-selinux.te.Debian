@@ -1,0 +1,11 @@
+
+module setfiles-selinux 1.1;
+
+require {
+        type initrc_tmp_t;
+        type setfiles_t;
+        class file { read write };
+}
+
+#============= setfiles_t ==============
+allow setfiles_t initrc_tmp_t:file { read write };

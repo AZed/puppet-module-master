@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+# Git hook to make a checkout and update the working directory after
+# receiving a push.
+#
+# This will overwrite locally modified files, but will not remove
+# untracked files to ensure that the two environments are identical.
+# (For that, add 'env -i git clean')
+#
+# Install this file to .git/hooks/post-receive and then run:
+#  git config receive.denyCurrentBranch ignore
+#
+
+worktree=$(git config core.worktree)
+if [ ! $worktree ] ; then
+    # We are not in a semi-bare repository with a detached working tree,
+    # so we must go up one directory level to run git commands that affect
+    # the working tree
+    oldcwd=$(pwd)
+    cd ..
+    worktree=$PWD
+fi
+
+echo "Updating working directory ${worktree} ..."
+env -i git checkout -f
+
+if [ $oldcwd ] ; then
+    cd $oldcwd
+fi

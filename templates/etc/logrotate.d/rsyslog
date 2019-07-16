@@ -1,0 +1,42 @@
+/var/log/syslog
+{
+	rotate <%= @rotate_syslog %>
+	<%= @rotate_syslog_freq %>
+	compress
+	delaycompress
+	missingok
+	notifempty
+	postrotate
+		<%= @postrotate %>
+	endscript
+}
+
+/var/log/mail.info
+/var/log/mail.warn
+/var/log/mail.err
+/var/log/mail.log
+/var/log/daemon.log
+/var/log/kern.log
+/var/log/auth.log
+/var/log/user.log
+/var/log/lpr.log
+/var/log/cron.log
+/var/log/debug
+/var/log/messages
+<% if @rotate_extra_logs and @rotate_extra_logs.respond_to?('each') -%>
+<%   @rotate_extra_logs.each do |extralog| -%>
+<%= extralog %>
+<%   end -%>
+<% end -%>
+{
+	rotate <%= @rotate_logs %>
+	<%= @rotate_logs_freq %>
+	compress
+	delaycompress
+	missingok
+	notifempty
+	sharedscripts
+	postrotate
+		<%= @postrotate %>
+	endscript
+}

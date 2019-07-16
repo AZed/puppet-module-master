@@ -1,0 +1,50 @@
+WSGIDaemonProcess sites user=www-data group=www-data processes=3 threads=25
+WSGIScriptAlias /trac /var/trac/trac.wsgi
+
+<Location /trac>
+  WSGIProcessGroup sites
+  WSGIApplicationGroup %{GLOBAL}
+  SetEnv trac.env_parent_dir /var/trac
+
+<% if @ldap -%>
+  AuthType Basic
+  AuthName Restricted
+  AuthBasicProvider ldap
+  AuthLDAPURL <%= @authldapurl %>
+<% end -%>
+<% if @apache_require -%>
+  <RequireAll>
+<%   if @apache_require.respond_to?('each') -%>
+<%     @apache_require.each do |req| -%>
+    Require <%= req %>
+<%     end -%>
+<%   else -%>
+    Require <%= @apache_require %>
+<%   end -%>
+  </RequireAll>
+<% end -%>
+<% if @errordocument and @errordocument.respond_to?('keys') -%>
+<%   @errordocument.keys.each do |key| -%>
+  ErrorDocument <%= key %> <%= @errordocument[key] %>
+<%   end -%>
+<% end -%>
+</Location>
+
+
+# Allow Apache to directly serve Trac static content.  This can greatly
+# improve speed.  Appropriate aliases must still be set for each Trac
+# directory for this to take effect, e.g.:
+#
+# Alias /trac/projectname/chrome/common /usr/share/pyshared/trac/htdocs
+# Alias /trac/projectname/chrome/site /var/www/trac/projectname/htdocs
+#
+# Setting the following alias instead will also allow local overrides
+# of the default CSS:
+#
+# Alias /trac/projectname/chrome/common /var/www/trac/projectname/htdocs/common
+#
+<Directory /usr/share/pyshared/trac/htdocs>
+  Options FollowSymLinks
+  Order allow,deny
+  Allow from all
+</Directory>

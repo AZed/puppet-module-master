@@ -1,0 +1,8 @@
+# cron.d file for timeoutd
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+### Timeoutd has a habit of dying so we'll check it and restart 
+### it if necessary.
+*/5 * * * * root /bin/pidof timeoutd 2>&1 > /dev/null || /etc/init.d/timeoutd restart
+

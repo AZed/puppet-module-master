@@ -1,0 +1,11 @@
+
+module ntp-selinux 1.0;
+
+require {
+	type ntpd_t;
+	type var_run_t;
+	class sock_file write;
+}
+
+#============= ntpd_t ==============
+allow ntpd_t var_run_t:sock_file write;

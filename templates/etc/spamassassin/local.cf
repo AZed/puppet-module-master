@@ -1,0 +1,89 @@
+# This is the right place to customize your installation of SpamAssassin.
+#
+# See 'perldoc Mail::SpamAssassin::Conf' for details of what can be
+# tweaked.
+#
+# Only a small subset of options are listed below
+#
+###########################################################################
+
+#   Add *****SPAM***** to the Subject header of spam e-mails
+#
+# rewrite_header Subject *****SPAM*****
+<% if @rewrite_header -%>
+rewrite_header <%= @rewrite_header %>
+<% end -%>
+
+#   Save spam messages as a message/rfc822 MIME attachment instead of
+#   modifying the original message (0: off, 2: use text/plain instead)
+#
+# report_safe 1
+<% if @report_safe -%>
+report_safe 1
+<% end -%>
+
+
+#   Set which networks or hosts are considered 'trusted' by your mail
+#   server (i.e. not spammers)
+#
+# trusted_networks 212.17.35.
+<% if @trusted_networks -%>
+trusted_networks <%= @trusted_networks.join(' ') %>
+<% end -%>
+
+#   Set file-locking method (flock is not safe over NFS, but is faster)
+#
+# lock_method flock
+
+
+#   Set the threshold at which a message is considered spam (default: 5.0)
+#
+required_score <%= @required_score -%>
+
+
+#   Use Bayesian classifier (default: 1)
+#
+<% if @use_bayes -%>
+use_bayes 1
+<% else -%>
+use_bayes 0
+<% end -%>
+
+#   Bayesian classifier auto-learning (default: 1)
+#
+<% if @bayes_auto_learn -%>
+bayes_auto_learn 1
+<% else -%>
+bayes_auto_learn 1
+<% end -%>
+
+
+#   Set headers which may provide inappropriate cues to the Bayesian
+#   classifier
+#
+# bayes_ignore_header X-Bogosity
+# bayes_ignore_header X-Spam-Flag
+# bayes_ignore_header X-Spam-Status
+
+
+#   Whether to decode non- UTF-8 and non-ASCII textual parts and recode
+#   them to UTF-8 before the text is given over to rules processing.
+#
+# normalize_charset 1
+
+#   Some shortcircuiting, if the plugin is enabled
+#
+ifplugin Mail::SpamAssassin::Plugin::Shortcircuit
+<% if @templates_shortcircuit -%>
+<%   @templates_shortcircuit.each do |template| -%>
+
+<%= scope.function_template(["#{template}"]) -%>
+<%   end -%>
+<% end -%>
+endif # Mail::SpamAssassin::Plugin::Shortcircuit
+<% if @templates_final -%>
+<%   @templates_final.each do |template| -%>
+
+<%= scope.function_template(["#{template}"]) -%>
+<%   end -%>
+<% end -%>

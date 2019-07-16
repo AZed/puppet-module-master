@@ -1,0 +1,13 @@
+# RANCID router.db file for '<%= @site_name %>'
+
+<% @devices.sort.each do |device,device_data| -%>
+<% if device_data.has_key?('rancid_type') -%>
+<% 
+    state = 'up'
+    if device_data.has_key?('rancid_state') 
+        state = device_data['rancid_state']
+    end
+-%>
+<%= device -%>;<%= device_data['rancid_type'] -%>;<%= state %>
+<% end -%>
+<% end -%>

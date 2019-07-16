@@ -1,0 +1,11 @@
+# Debian Primary Repository
+<% if @debian_release_archived.to_s.empty? -%>
+deb <%= @debian_mirror %> <%= @debian_release_codename %> main<% if @nonfree %> contrib non-free<% end %>
+deb-src <%= @debian_mirror %> <%= @debian_release_codename %> main<% if @nonfree %> contrib non-free<% end %>
+
+# Debian Security Updates
+deb <%= @debian_security_mirror %> <%= @debian_release_codename %>/updates main<% if @nonfree %> contrib non-free<% end %>
+deb-src <%= @debian_security_mirror %> <%= @debian_release_codename %>/updates main<% if @nonfree %> contrib non-free<% end %>
+<% else -%>
+deb <%= @debian_archive_mirror %> <%= @debian_release_codename %> main<% if @nonfree %> contrib non-free<% end %>
+<% end -%>

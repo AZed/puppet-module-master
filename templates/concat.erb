@@ -1,0 +1,5 @@
+<% if @templates and @templates.respond_to?('each') -%>
+<%   @templates.each do |template| -%>
+<%= scope.function_template(["#{template}"]) -%>
+<%   end -%>
+<% end -%>

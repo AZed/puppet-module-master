@@ -1,0 +1,12 @@
+
+module setrans-selinux 1.1;
+
+
+require {
+        type etc_t;
+        type setrans_t;
+        class file { read getattr };
+}
+
+#============= setrans_t ==============
+allow setrans_t etc_t:file read;
